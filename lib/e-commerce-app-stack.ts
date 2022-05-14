@@ -1,4 +1,5 @@
 import { RemovalPolicy, Stack, StackProps } from 'aws-cdk-lib';
+import { LambdaRestApi } from 'aws-cdk-lib/aws-apigateway';
 import { AttributeType, BillingMode, Table } from 'aws-cdk-lib/aws-dynamodb';
 import { Runtime } from 'aws-cdk-lib/aws-lambda';
 import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs';
@@ -32,5 +33,22 @@ export class ECommerceAppStack extends Stack {
     });
 
     productTable.grantReadWriteData(productFunction);
+
+    const apiGateway = new LambdaRestApi(this, 'productApiGateway', {
+      restApiName: 'Product Service',
+      handler: productFunction,
+      proxy: false,
+    });
+
+    const products = apiGateway.root.addResource('products');
+
+    products.addMethod('GET');
+    products.addMethod('POST');
+
+    const product = products.addResource('{id}');
+
+    product.addMethod('GET');
+    product.addMethod('PUT');
+    product.addMethod('DELETE');
   }
 }
