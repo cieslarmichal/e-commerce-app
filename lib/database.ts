@@ -9,7 +9,13 @@ export class Database extends Construct {
   constructor(scope: Construct, id: string) {
     super(scope, id);
 
-    this.productsTable = new Table(this, 'products', {
+    this.productsTable = this.createProductsTable();
+
+    this.basketsTable = this.createBasketsTable();
+  }
+
+  createProductsTable() {
+    return new Table(this, 'products', {
       partitionKey: {
         name: 'id',
         type: AttributeType.STRING,
@@ -18,8 +24,10 @@ export class Database extends Construct {
       removalPolicy: RemovalPolicy.DESTROY,
       billingMode: BillingMode.PAY_PER_REQUEST,
     });
+  }
 
-    this.basketsTable = new Table(this, 'baskets', {
+  createBasketsTable() {
+    return new Table(this, 'baskets', {
       partitionKey: {
         name: 'email',
         type: AttributeType.STRING,
