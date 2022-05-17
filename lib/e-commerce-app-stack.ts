@@ -6,6 +6,7 @@ import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs';
 import { Construct } from 'constructs';
 import { join } from 'path';
 import { Database } from './database';
+import { Microservices } from './microservices';
 
 export class ECommerceAppStack extends Stack {
   constructor(scope: Construct, id: string, props?: StackProps) {
@@ -13,23 +14,15 @@ export class ECommerceAppStack extends Stack {
 
     const database = new Database(this, 'Database');
 
-    const productFunction = new NodejsFunction(this, 'productLambdaFunction', {
-      bundling: {
-        externalModules: ['aws-sdk'],
-      },
-      environment: {
-        PRIMARY_KEY: 'id',
-        DB_TABLE_NAME: database.productTable.tableName,
-      },
-      runtime: Runtime.NODEJS_16_X,
-      entry: join(__dirname, '/../src/product/index.js'),
+    const microservices = new Microservices(this, 'Microservices', {
+      productTableName: database.productTable.tableName,
     });
 
-    database.productTable.grantReadWriteData(productFunction);
+    database.productTable.grantReadWriteData(microservices.productMicroservice);
 
     const apiGateway = new LambdaRestApi(this, 'productApiGateway', {
       restApiName: 'Product Service',
-      handler: productFunction,
+      handler: microservices.productMicroservice,
       proxy: false,
     });
 
