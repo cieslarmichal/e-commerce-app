@@ -4,7 +4,6 @@ import {
   PutItemCommand,
   DeleteItemCommand,
   UpdateItemCommand,
-  QueryCommand,
 } from '@aws-sdk/client-dynamodb';
 import { marshall, unmarshall } from '@aws-sdk/util-dynamodb';
 import { dynamoDbClient } from './dynamoDbClient';
@@ -123,9 +122,9 @@ const getProductsByCategory = async (category) => {
 
   try {
     const { Items } = await dynamoDbClient.send(
-      new QueryCommand({
+      new ScanCommand({
         TableName: process.env.DB_TABLE_NAME,
-        FilterExpression: 'contains (category, :category)',
+        FilterExpression: 'category = :category',
         ExpressionAttributeValues: {
           ':category': { S: category },
         },
