@@ -32,9 +32,9 @@ exports.handler = async function (event) {
         break;
       }
       case 'DELETE': {
-        const basketId = event.pathParameters.id;
+        const email = event.pathParameters.email;
 
-        body = await deleteBasket(basketId);
+        body = await deleteBasket(email);
 
         break;
       }
