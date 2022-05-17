@@ -3,7 +3,7 @@ import { IFunction } from 'aws-cdk-lib/aws-lambda';
 import { Construct } from 'constructs';
 
 export interface ApiGatewayProperties {
-  readonly productMicroservice: IFunction;
+  readonly productsMicroservice: IFunction;
 }
 
 export class ApiGateway extends Construct {
@@ -12,7 +12,7 @@ export class ApiGateway extends Construct {
 
     const productApiGateway = new LambdaRestApi(this, 'productApiGateway', {
       restApiName: 'Product Service',
-      handler: properties.productMicroservice,
+      handler: properties.productsMicroservice,
       proxy: false,
     });
 

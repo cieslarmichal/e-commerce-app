@@ -6,28 +6,53 @@ import { join } from 'path';
 
 export interface MicroservicesProperties {
   readonly productsTable: ITable;
+  readonly basketsTable: ITable;
 }
 
 export class Microservices extends Construct {
-  public readonly productMicroservice: NodejsFunction;
+  public readonly productsMicroservice: NodejsFunction;
+  public readonly basketsMicroservice: NodejsFunction;
 
   constructor(scope: Construct, id: string, properties: MicroservicesProperties) {
     super(scope, id);
 
-    const productFunction = new NodejsFunction(this, 'productLambdaFunction', {
+    this.productsMicroservice = this.createProductsFunction(properties.productsTable);
+    this.basketsMicroservice = this.createBasketsFunction(properties.basketsTable);
+  }
+
+  createProductsFunction(productsTable: ITable) {
+    const productsFunction = new NodejsFunction(this, 'productsLambdaFunction', {
       bundling: {
         externalModules: ['aws-sdk'],
       },
       environment: {
         PRIMARY_KEY: 'id',
-        DB_TABLE_NAME: properties.productsTable.tableName,
+        DB_TABLE_NAME: productsTable.tableName,
       },
       runtime: Runtime.NODEJS_16_X,
       entry: join(__dirname, '/../src/product/index.js'),
     });
 
-    properties.productsTable.grantReadWriteData(productFunction);
+    productsTable.grantReadWriteData(productsFunction);
 
-    this.productMicroservice = productFunction;
+    return productsFunction;
+  }
+
+  createBasketsFunction(basketsTable: ITable) {
+    const basketsFunction = new NodejsFunction(this, 'basketsLambdaFunction', {
+      bundling: {
+        externalModules: ['aws-sdk'],
+      },
+      environment: {
+        PRIMARY_KEY: 'email',
+        DB_TABLE_NAME: basketsTable.tableName,
+      },
+      runtime: Runtime.NODEJS_16_X,
+      entry: join(__dirname, '/../src/basket/index.js'),
+    });
+
+    basketsTable.grantReadWriteData(basketsFunction);
+
+    return basketsFunction;
   }
 }
