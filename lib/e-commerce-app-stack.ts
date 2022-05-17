@@ -1,6 +1,6 @@
 import { Stack, StackProps } from 'aws-cdk-lib';
 import { Construct } from 'constructs';
-import { ApiGateway } from './apiGateway';
+import { ApiGateways } from './apiGateways';
 import { Database } from './database';
 import { Microservices } from './microservices';
 
@@ -15,8 +15,9 @@ export class ECommerceAppStack extends Stack {
       basketsTable: database.basketsTable,
     });
 
-    new ApiGateway(this, 'ApiGateway', {
+    new ApiGateways(this, 'ApiGateways', {
       productsMicroservice: microservices.productsMicroservice,
+      basketsMicroservice: microservices.basketsMicroservice,
     });
   }
 }
