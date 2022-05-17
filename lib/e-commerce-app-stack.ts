@@ -11,12 +11,10 @@ export class ECommerceAppStack extends Stack {
     const database = new Database(this, 'Database');
 
     const microservices = new Microservices(this, 'Microservices', {
-      productTableName: database.productTable.tableName,
+      productsTable: database.productsTable,
     });
 
-    database.productTable.grantReadWriteData(microservices.productMicroservice);
-
-    const apiGateway = new ApiGateway(this, 'ApiGateway', {
+    new ApiGateway(this, 'ApiGateway', {
       productMicroservice: microservices.productMicroservice,
     });
   }

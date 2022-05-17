@@ -1,10 +1,11 @@
+import { ITable } from 'aws-cdk-lib/aws-dynamodb';
 import { Runtime } from 'aws-cdk-lib/aws-lambda';
 import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs';
 import { Construct } from 'constructs';
 import { join } from 'path';
 
 export interface MicroservicesProperties {
-  readonly productTableName: string;
+  readonly productsTable: ITable;
 }
 
 export class Microservices extends Construct {
@@ -13,16 +14,20 @@ export class Microservices extends Construct {
   constructor(scope: Construct, id: string, properties: MicroservicesProperties) {
     super(scope, id);
 
-    this.productMicroservice = new NodejsFunction(this, 'productLambdaFunction', {
+    const productFunction = new NodejsFunction(this, 'productLambdaFunction', {
       bundling: {
         externalModules: ['aws-sdk'],
       },
       environment: {
         PRIMARY_KEY: 'id',
-        DB_TABLE_NAME: properties.productTableName,
+        DB_TABLE_NAME: properties.productsTable.tableName,
       },
       runtime: Runtime.NODEJS_16_X,
       entry: join(__dirname, '/../src/product/index.js'),
     });
+
+    properties.productsTable.grantReadWriteData(productFunction);
+
+    this.productMicroservice = productFunction;
   }
 }
