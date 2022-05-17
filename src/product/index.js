@@ -13,54 +13,70 @@ import { v4 as uuid4 } from 'uuid';
 exports.handler = async function (event) {
   console.log(event);
 
-  switch (event.httpMethod) {
-    case 'GET': {
-      if (event.queryStringParameters !== null) {
-        const category = event.queryStringParameters.category;
+  try {
+    switch (event.httpMethod) {
+      case 'GET': {
+        if (event.queryStringParameters !== null) {
+          const category = event.queryStringParameters.category;
 
-        body = await getProductsByCategory(category);
-      } else if (event.pathParameters !== null) {
+          body = await getProductsByCategory(category);
+        } else if (event.pathParameters !== null) {
+          const productId = event.pathParameters.id;
+
+          body = await getProduct(productId);
+        } else {
+          body = await getAllProducts();
+        }
+
+        break;
+      }
+      case 'POST': {
+        const productProperties = JSON.parse(event.body);
+
+        body = await createProduct(productProperties);
+
+        break;
+      }
+      case 'PUT': {
         const productId = event.pathParameters.id;
 
-        body = await getProduct(productId);
-      } else {
-        body = await getAllProducts();
+        const productProperties = JSON.parse(event.body);
+
+        body = await updateProduct(productId, productProperties);
+
+        break;
       }
+      case 'DELETE': {
+        const productId = event.pathParameters.id;
 
-      break;
+        body = await deleteProduct(productId);
+
+        break;
+      }
+      default: {
+        throw new Error(`Unsupported route: "${event.httpMethod}"`);
+      }
     }
-    case 'POST': {
-      const productProperties = JSON.parse(event.body);
 
-      body = await createProduct(productProperties);
+    console.log(body);
 
-      break;
-    }
-    case 'PUT': {
-      const productId = event.pathParameters.id;
-
-      const productProperties = JSON.parse(event.body);
-
-      body = await updateProduct(productId, productProperties);
-
-      break;
-    }
-    case 'DELETE': {
-      const productId = event.pathParameters.id;
-
-      body = await deleteProduct(productId);
-
-      break;
-    }
-    default: {
-      throw new Error(`Unsupported route: "${event.httpMethod}"`);
-    }
+    return {
+      statusCode: 200,
+      body: JSON.stringify({
+        data: body,
+      }),
+    };
+  } catch (error) {
+    console.log(error);
+    return {
+      statusCode: 500,
+      body: JSON.stringify({
+        message: 'Failed to perform operation.',
+        errorMessage: error.message,
+        errorStack: error.stack,
+      }),
+    };
   }
-
-  return {
-    statusCode: 200,
-    body,
-  };
 };
 
 const getProduct = async (productId) => {
