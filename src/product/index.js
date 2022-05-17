@@ -12,6 +12,8 @@ import { v4 as uuid4 } from 'uuid';
 exports.handler = async function (event) {
   console.log(event);
 
+  let body;
+
   try {
     switch (event.httpMethod) {
       case 'GET': {

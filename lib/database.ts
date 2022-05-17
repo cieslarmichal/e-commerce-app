@@ -15,7 +15,7 @@ export class Database extends Construct {
   }
 
   createProductsTable() {
-    return new Table(this, 'products', {
+    return new Table(this, 'Products', {
       partitionKey: {
         name: 'id',
         type: AttributeType.STRING,
@@ -27,7 +27,7 @@ export class Database extends Construct {
   }
 
   createBasketsTable() {
-    return new Table(this, 'baskets', {
+    return new Table(this, 'Baskets', {
       partitionKey: {
         name: 'email',
         type: AttributeType.STRING,

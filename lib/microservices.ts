@@ -21,7 +21,7 @@ export class Microservices extends Construct {
   }
 
   createProductsFunction(productsTable: ITable) {
-    const productsFunction = new NodejsFunction(this, 'productsLambdaFunction', {
+    const productsFunction = new NodejsFunction(this, 'ProductsLambdaFunction', {
       bundling: {
         externalModules: ['aws-sdk'],
       },
@@ -39,7 +39,7 @@ export class Microservices extends Construct {
   }
 
   createBasketsFunction(basketsTable: ITable) {
-    const basketsFunction = new NodejsFunction(this, 'basketsLambdaFunction', {
+    const basketsFunction = new NodejsFunction(this, 'BasketsLambdaFunction', {
       bundling: {
         externalModules: ['aws-sdk'],
       },

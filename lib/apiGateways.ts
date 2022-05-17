@@ -17,7 +17,7 @@ export class ApiGateways extends Construct {
   }
 
   createProductsApiGateway(productsMicroservice: IFunction) {
-    const productsApiGateway = new LambdaRestApi(this, 'productApiGateway', {
+    const productsApiGateway = new LambdaRestApi(this, 'ProductsApiGateway', {
       restApiName: 'Products Api Gateway',
       handler: productsMicroservice,
       proxy: false,
@@ -36,7 +36,7 @@ export class ApiGateways extends Construct {
   }
 
   createBasketsApiGateway(basketsMicroservice: IFunction) {
-    const basketsApiGateway = new LambdaRestApi(this, 'productApiGateway', {
+    const basketsApiGateway = new LambdaRestApi(this, 'BasketsApiGateway', {
       restApiName: 'Baskets Api Gateway',
       handler: basketsMicroservice,
       proxy: false,
