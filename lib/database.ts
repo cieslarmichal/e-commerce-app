@@ -5,6 +5,7 @@ import { Construct } from 'constructs';
 export class Database extends Construct {
   public readonly productsTable: ITable;
   public readonly basketsTable: ITable;
+  public readonly ordersTable: ITable;
 
   constructor(scope: Construct, id: string) {
     super(scope, id);
@@ -12,6 +13,8 @@ export class Database extends Construct {
     this.productsTable = this.createProductsTable();
 
     this.basketsTable = this.createBasketsTable();
+
+    this.ordersTable = this.createOrdersTable();
   }
 
   createProductsTable() {
@@ -33,6 +36,22 @@ export class Database extends Construct {
         type: AttributeType.STRING,
       },
       tableName: 'baskets',
+      removalPolicy: RemovalPolicy.DESTROY,
+      billingMode: BillingMode.PAY_PER_REQUEST,
+    });
+  }
+
+  createOrdersTable() {
+    return new Table(this, 'Orders', {
+      partitionKey: {
+        name: 'email',
+        type: AttributeType.STRING,
+      },
+      sortKey: {
+        name: 'orderDate',
+        type: AttributeType.STRING,
+      },
+      tableName: 'orders',
       removalPolicy: RemovalPolicy.DESTROY,
       billingMode: BillingMode.PAY_PER_REQUEST,
     });
