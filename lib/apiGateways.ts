@@ -5,6 +5,7 @@ import { Construct } from 'constructs';
 export interface ApiGatewaysProperties {
   readonly productsMicroservice: IFunction;
   readonly basketsMicroservice: IFunction;
+  readonly ordersMicroservice: IFunction;
 }
 
 export class ApiGateways extends Construct {
@@ -14,6 +15,8 @@ export class ApiGateways extends Construct {
     this.createProductsApiGateway(properties.productsMicroservice);
 
     this.createBasketsApiGateway(properties.basketsMicroservice);
+
+    this.createOrdersApiGateway(properties.ordersMicroservice);
   }
 
   createProductsApiGateway(productsMicroservice: IFunction) {
@@ -55,5 +58,21 @@ export class ApiGateways extends Construct {
     const basketCheckout = baskets.addResource('checkout');
 
     basketCheckout.addMethod('POST');
+  }
+
+  createOrdersApiGateway(ordersMicroservice: IFunction) {
+    const ordersApiGateway = new LambdaRestApi(this, 'OrdersApiGateway', {
+      restApiName: 'Orders Api Gateway',
+      handler: ordersMicroservice,
+      proxy: false,
+    });
+
+    const orders = ordersApiGateway.root.addResource('orders');
+
+    orders.addMethod('GET');
+
+    const order = orders.addResource('{email}');
+
+    order.addMethod('GET');
   }
 }

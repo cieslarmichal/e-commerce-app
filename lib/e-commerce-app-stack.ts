@@ -21,6 +21,7 @@ export class ECommerceAppStack extends Stack {
     new ApiGateways(this, 'ApiGateways', {
       productsMicroservice: microservices.productsMicroservice,
       basketsMicroservice: microservices.basketsMicroservice,
+      ordersMicroservice: microservices.ordersMicroservice,
     });
 
     new EventBridge(this, 'EventBridge', {
