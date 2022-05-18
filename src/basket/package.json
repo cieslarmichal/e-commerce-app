@@ -4,6 +4,7 @@
   "main": "index.js",
   "dependencies": {
     "@aws-sdk/client-dynamodb": "^3.87.0",
+    "@aws-sdk/client-eventbridge": "^3.92.0",
     "@aws-sdk/util-dynamodb": "^3.87.0"
   }
 }
