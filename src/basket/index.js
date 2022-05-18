@@ -1,6 +1,8 @@
 import { GetItemCommand, ScanCommand, PutItemCommand, DeleteItemCommand } from '@aws-sdk/client-dynamodb';
+import { PutEventsCommand } from '@aws-sdk/client-eventbridge';
 import { marshall, unmarshall } from '@aws-sdk/util-dynamodb';
 import { dynamoDbClient } from './dynamoDbClient';
+import { eventBridgeClient } from './eventBridgeClient';
 
 exports.handler = async function (event) {
   console.log(event);
@@ -21,11 +23,11 @@ exports.handler = async function (event) {
         break;
       }
       case 'POST': {
-        if (event.path === '/basket/checkout') {
-          body = await checkoutBasket();
-        } else {
-          const basketProperties = JSON.parse(event.body);
+        const basketProperties = JSON.parse(event.body);
 
+        if (event.path === '/basket/checkout') {
+          body = await checkoutBasket(basketProperties);
+        } else {
           body = await createBasket(basketProperties);
         }
 
@@ -143,20 +145,68 @@ const deleteBasket = async (email) => {
   }
 };
 
-const checkoutBasket = async () => {
+const checkoutBasket = async (basketProperties) => {
   console.log('checkoutBasket');
 
+  if (!basketProperties?.email) {
+    throw new Error('Email not provided');
+  }
+
+  const basket = await getBasket(basketProperties.email);
+
+  const checkoutPayload = prepareOrderPayload(basketProperties, basket);
+
+  const publishedEvent = await publishCheckoutBasketEvent(checkoutPayload);
+
+  await deleteBasket(basketProperties.email);
+};
+
+const prepareOrderPayload = async (basketProperties, basket) => {
+  console.log('prepareOrderPayload');
+
   try {
-    const result = await dynamoDbClient.send(
-      new DeleteItemCommand({
-        TableName: process.env.DB_TABLE_NAME,
-        Key: marshall({ id: basketId }),
+    if (!basket?.items) {
+      throw new Error('Basket does not contain any items');
+    }
+
+    const totalPrice = basket.items.reduce((previousItem, nextItem) => previousItem.price + nextItem.price);
+
+    basketProperties.totalPrice = totalPrice;
+
+    console.log(basketProperties);
+
+    Object.assign(basketProperties, basket);
+
+    console.log(basketProperties);
+
+    return basketProperties;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};
+
+const publishCheckoutBasketEvent = async (checkoutPayload) => {
+  console.log('publishCheckoutBasketEvent', checkoutPayload);
+
+  try {
+    const data = await eventBridgeClient.send(
+      new PutEventsCommand({
+        Entries: [
+          {
+            Source: 'com.ecommerce.basket.checkoutbasket',
+            Detail: JSON.stringify(checkoutPayload),
+            DetailType: 'CheckoutBasket',
+            Resources: [],
+            EventBusName: 'EventBus',
+          },
+        ],
       }),
     );
 
-    console.log('Success, item deleted', result);
+    console.log(data);
 
-    return result;
+    return data;
   } catch (error) {
     console.error(error);
     throw error;
