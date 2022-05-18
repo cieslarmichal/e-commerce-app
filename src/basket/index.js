@@ -25,7 +25,7 @@ exports.handler = async function (event) {
       case 'POST': {
         const basketProperties = JSON.parse(event.body);
 
-        if (event.path === '/basket/checkout') {
+        if (event.path === '/baskets/checkout') {
           body = await checkoutBasket(basketProperties);
         } else {
           body = await createBasket(basketProperties);
@@ -154,7 +154,9 @@ const checkoutBasket = async (basketProperties) => {
 
   const basket = await getBasket(basketProperties.email);
 
-  const checkoutPayload = prepareOrderPayload(basketProperties, basket);
+  const checkoutPayload = await prepareOrderPayload(basketProperties, basket);
+
+  console.log('checkout payload', checkoutPayload);
 
   await publishCheckoutBasketEvent(checkoutPayload);
 
@@ -169,7 +171,9 @@ const prepareOrderPayload = async (basketProperties, basket) => {
       throw new Error('Basket does not contain any items');
     }
 
-    const totalPrice = basket.items.reduce((previousItem, nextItem) => previousItem.price + nextItem.price);
+    const totalPrice = basket.items.reduce(
+      (previousItem, nextItem) => previousItem.price * previousItem.quantity + nextItem.price * nextItem.quantity,
+    );
 
     basketProperties.totalPrice = totalPrice;
 

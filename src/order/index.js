@@ -1,25 +1,41 @@
-import { GetItemCommand, ScanCommand } from '@aws-sdk/client-dynamodb';
+import { QueryCommand, ScanCommand, PutItemCommand } from '@aws-sdk/client-dynamodb';
 import { marshall, unmarshall } from '@aws-sdk/util-dynamodb';
 import { dynamoDbClient } from './dynamoDbClient';
 
 exports.handler = async function (event) {
   console.log(event);
 
+  const eventType = event['detail-type'];
+
+  if (eventType !== undefined) {
+    await handleEventBusEvent(event);
+  } else {
+    const response = await handleApiGatewayEvent(event);
+
+    return response;
+  }
+};
+
+const handleEventBusEvent = async (event) => {
+  console.log('Event bus invocation');
+
+  await createOrder(event.detail);
+};
+
+const handleApiGatewayEvent = async (event) => {
   let body;
 
   try {
     switch (event.httpMethod) {
       case 'GET': {
-        if (event.queryStringParameters !== null) {
-          const category = event.queryStringParameters.category;
+        if (event.pathParameters !== null) {
+          const { email } = event.pathParameters;
 
-          body = await getProductsByCategory(category);
-        } else if (event.pathParameters !== null) {
-          const productId = event.pathParameters.id;
+          const { orderDate } = event.queryStringParameters;
 
-          body = await getProduct(productId);
+          body = await getOrder(email, orderDate);
         } else {
-          body = await getAllProducts();
+          body = await getAllOrders();
         }
 
         break;
@@ -50,36 +66,44 @@ exports.handler = async function (event) {
   }
 };
 
-const getProduct = async (productId) => {
-  console.log('getProduct');
+const createOrder = async (orderProperties) => {
+  console.log('createOrder', orderProperties);
 
   try {
-    const { Item } = await dynamoDbClient.send(
-      new GetItemCommand({
+    const orderDate = new Date().toISOString();
+
+    orderProperties.orderDate = orderDate;
+
+    const result = await dynamoDbClient.send(
+      new PutItemCommand({
         TableName: process.env.DB_TABLE_NAME,
-        Key: marshall({ id: productId }),
+        Item: marshall(orderProperties || {}),
       }),
     );
 
-    console.log(Item);
+    console.log(result);
 
-    return Item ? unmarshall(Item) : {};
+    return result;
   } catch (error) {
     console.error(error);
     throw error;
   }
 };
 
-const getAllProducts = async () => {
-  console.log('getProducts');
+const getOrder = async (email, orderDate) => {
+  console.log('getOrder');
 
   try {
     const { Items } = await dynamoDbClient.send(
-      new ScanCommand({
+      new QueryCommand({
         TableName: process.env.DB_TABLE_NAME,
+        KeyConditionExpression: 'email = :email and orderDate = :orderDate',
+        ExpressionAttributeValues: {
+          ':email': { S: email },
+          ':orderDate': { S: orderDate },
+        },
       }),
     );
-
     console.log(Items);
 
     return Items ? Items.map((item) => unmarshall(item)) : {};
@@ -89,17 +113,13 @@ const getAllProducts = async () => {
   }
 };
 
-const getProductsByCategory = async (category) => {
-  console.log('getProductsByCategory', category);
+const getAllOrders = async () => {
+  console.log('getOrders');
 
   try {
     const { Items } = await dynamoDbClient.send(
       new ScanCommand({
         TableName: process.env.DB_TABLE_NAME,
-        FilterExpression: 'category = :category',
-        ExpressionAttributeValues: {
-          ':category': { S: category },
-        },
       }),
     );
 
