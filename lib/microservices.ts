@@ -51,6 +51,9 @@ export class Microservices extends Construct {
       environment: {
         PRIMARY_KEY: 'email',
         DB_TABLE_NAME: basketsTable.tableName,
+        EVENT_SOURCE: 'com.ecommerce.basket.checkoutbasket',
+        EVENT_DETAIL_TYPE: 'CheckoutBasket',
+        EVENT_BUS_NAME: 'EventBus',
       },
       runtime: Runtime.NODEJS_16_X,
       entry: join(__dirname, '/../src/basket/index.js'),

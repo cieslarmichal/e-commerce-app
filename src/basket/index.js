@@ -156,7 +156,7 @@ const checkoutBasket = async (basketProperties) => {
 
   const checkoutPayload = prepareOrderPayload(basketProperties, basket);
 
-  const publishedEvent = await publishCheckoutBasketEvent(checkoutPayload);
+  await publishCheckoutBasketEvent(checkoutPayload);
 
   await deleteBasket(basketProperties.email);
 };
@@ -194,11 +194,11 @@ const publishCheckoutBasketEvent = async (checkoutPayload) => {
       new PutEventsCommand({
         Entries: [
           {
-            Source: 'com.ecommerce.basket.checkoutbasket',
+            Source: process.env.EVENT_SOURCE,
             Detail: JSON.stringify(checkoutPayload),
-            DetailType: 'CheckoutBasket',
+            DetailType: process.env.EVENT_DETAIL_TYPE,
             Resources: [],
-            EventBusName: 'EventBus',
+            EventBusName: process.env.EVENT_BUS_NAME,
           },
         ],
       }),
