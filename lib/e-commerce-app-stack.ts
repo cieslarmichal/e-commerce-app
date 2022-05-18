@@ -15,6 +15,7 @@ export class ECommerceAppStack extends Stack {
     const microservices = new Microservices(this, 'Microservices', {
       productsTable: database.productsTable,
       basketsTable: database.basketsTable,
+      ordersTable: database.ordersTable,
     });
 
     new ApiGateways(this, 'ApiGateways', {
