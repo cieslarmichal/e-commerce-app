@@ -1,11 +1,12 @@
 import { EventBus, Rule } from 'aws-cdk-lib/aws-events';
-import { LambdaFunction } from 'aws-cdk-lib/aws-events-targets';
+import { SqsQueue } from 'aws-cdk-lib/aws-events-targets';
 import { IFunction } from 'aws-cdk-lib/aws-lambda';
+import { IQueue } from 'aws-cdk-lib/aws-sqs';
 import { Construct } from 'constructs';
 
 export interface EventBridgeProperties {
   readonly publisher: IFunction;
-  readonly target: IFunction;
+  readonly target: IQueue;
 }
 
 export class EventBridge extends Construct {
@@ -25,7 +26,7 @@ export class EventBridge extends Construct {
       ruleName: 'CheckoutBasketRule',
     });
 
-    checkoutBasketRule.addTarget(new LambdaFunction(properties.target));
+    checkoutBasketRule.addTarget(new SqsQueue(properties.target));
 
     eventBus.grantPutEventsTo(properties.publisher);
   }

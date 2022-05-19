@@ -24,13 +24,13 @@ export class ECommerceAppStack extends Stack {
       ordersMicroservice: microservices.ordersMicroservice,
     });
 
-    new EventBridge(this, 'EventBridge', {
-      publisher: microservices.basketsMicroservice,
-      target: microservices.ordersMicroservice,
+    const queue = new OrdersQueue(this, 'Queue', {
+      consumer: microservices.ordersMicroservice,
     });
 
-    new OrdersQueue(this, 'Queue', {
-      consumer: microservices.ordersMicroservice,
+    new EventBridge(this, 'EventBridge', {
+      publisher: microservices.basketsMicroservice,
+      target: queue.instance,
     });
   }
 }
