@@ -1,10 +1,10 @@
 import { Stack, StackProps } from 'aws-cdk-lib';
-
 import { Construct } from 'constructs';
 import { ApiGateways } from './apiGateways';
 import { Database } from './database';
 import { EventBridge } from './eventBridge';
 import { Microservices } from './microservices';
+import { OrdersQueue } from './ordersQueue';
 
 export class ECommerceAppStack extends Stack {
   constructor(scope: Construct, id: string, props?: StackProps) {
@@ -27,6 +27,10 @@ export class ECommerceAppStack extends Stack {
     new EventBridge(this, 'EventBridge', {
       publisher: microservices.basketsMicroservice,
       target: microservices.ordersMicroservice,
+    });
+
+    new OrdersQueue(this, 'Queue', {
+      consumer: microservices.ordersMicroservice,
     });
   }
 }
