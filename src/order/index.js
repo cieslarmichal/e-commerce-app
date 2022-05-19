@@ -5,10 +5,8 @@ import { dynamoDbClient } from './dynamoDbClient';
 exports.handler = async function (event) {
   console.log(event);
 
-  const eventType = event['detail-type'];
-
-  if (eventType !== undefined) {
-    await handleEventBusEvent(event);
+  if (event.Records !== null) {
+    await handleQueueMessage(event);
   } else {
     const response = await handleApiGatewayEvent(event);
 
@@ -16,10 +14,16 @@ exports.handler = async function (event) {
   }
 };
 
-const handleEventBusEvent = async (event) => {
-  console.log('Event bus invocation');
+const handleQueueMessage = async (event) => {
+  console.log('Queue polling', event);
 
-  await createOrder(event.detail);
+  event.Records.forEach(async (record) => {
+    console.log('Record: ', record);
+
+    const checkoutInfo = JSON.parse(record.body);
+
+    await createOrder(checkoutInfo.detail);
+  });
 };
 
 const handleApiGatewayEvent = async (event) => {
