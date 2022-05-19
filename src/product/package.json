@@ -3,7 +3,12 @@
   "version": "1.0.0",
   "main": "index.js",
   "dependencies": {
+    "@aws-cdk/aws-lambda": "^1.156.1",
     "@aws-sdk/client-dynamodb": "^3.87.0",
     "@aws-sdk/util-dynamodb": "^3.87.0"
+  },
+  "devDependencies": {
+    "@types/aws-lambda": "^8.10.97",
+    "@types/uuid": "^8.3.4"
   }
 }

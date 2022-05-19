@@ -5,7 +5,7 @@ import { dynamoDbClient } from './dynamoDbClient';
 exports.handler = async function (event) {
   console.log(event);
 
-  if (event.Records !== null) {
+  if (event.Records) {
     await handleQueueMessage(event);
   } else {
     const response = await handleApiGatewayEvent(event);

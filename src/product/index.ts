@@ -1,3 +1,4 @@
+import { APIGatewayEvent, ProxyResult } from 'aws-lambda';
 import {
   GetItemCommand,
   ScanCommand,
@@ -9,7 +10,7 @@ import { marshall, unmarshall } from '@aws-sdk/util-dynamodb';
 import { dynamoDbClient } from './dynamoDbClient';
 import { v4 as uuid4 } from 'uuid';
 
-exports.handler = async function (event) {
+exports.handler = async function (event: APIGatewayEvent): Promise<ProxyResult> {
   console.log(event);
 
   let body;
@@ -18,11 +19,11 @@ exports.handler = async function (event) {
     switch (event.httpMethod) {
       case 'GET': {
         if (event.queryStringParameters !== null) {
-          const category = event.queryStringParameters.category;
+          const category = event.queryStringParameters.category as string;
 
           body = await getProductsByCategory(category);
         } else if (event.pathParameters !== null) {
-          const productId = event.pathParameters.id;
+          const productId = event.pathParameters.id as string;
 
           body = await getProduct(productId);
         } else {
@@ -32,23 +33,23 @@ exports.handler = async function (event) {
         break;
       }
       case 'POST': {
-        const productProperties = JSON.parse(event.body);
+        const productProperties = JSON.parse(event.body!);
 
         body = await createProduct(productProperties);
 
         break;
       }
       case 'PUT': {
-        const productId = event.pathParameters.id;
+        const productId = event.pathParameters!.id as string;
 
-        const productProperties = JSON.parse(event.body);
+        const productProperties = JSON.parse(event.body!);
 
         body = await updateProduct(productId, productProperties);
 
         break;
       }
       case 'DELETE': {
-        const productId = event.pathParameters.id;
+        const productId = event.pathParameters!.id as string;
 
         body = await deleteProduct(productId);
 
@@ -69,18 +70,18 @@ exports.handler = async function (event) {
     };
   } catch (error) {
     console.log(error);
+
     return {
       statusCode: 500,
       body: JSON.stringify({
         message: 'Failed to perform operation.',
-        errorMessage: error.message,
-        errorStack: error.stack,
+        errorMessage: error,
       }),
     };
   }
 };
 
-const getProduct = async (productId) => {
+const getProduct = async (productId: string) => {
   console.log('getProduct');
 
   try {
@@ -119,7 +120,7 @@ const getAllProducts = async () => {
   }
 };
 
-const getProductsByCategory = async (category) => {
+const getProductsByCategory = async (category: string) => {
   console.log('getProductsByCategory', category);
 
   try {
@@ -142,7 +143,7 @@ const getProductsByCategory = async (category) => {
   }
 };
 
-const createProduct = async (productProperties) => {
+const createProduct = async (productProperties: any) => {
   console.log('createProduct', productProperties);
 
   try {
@@ -166,7 +167,7 @@ const createProduct = async (productProperties) => {
   }
 };
 
-const deleteProduct = async (productId) => {
+const deleteProduct = async (productId: string) => {
   console.log('deleteProduct', productId);
 
   try {
@@ -186,7 +187,7 @@ const deleteProduct = async (productId) => {
   }
 };
 
-const updateProduct = async (productId, productProperties) => {
+const updateProduct = async (productId: string, productProperties: any) => {
   console.log('updateProduct', productId, productProperties);
 
   try {
