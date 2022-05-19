@@ -35,7 +35,7 @@ export class Microservices extends Construct {
         DB_TABLE_NAME: productsTable.tableName,
       },
       runtime: Runtime.NODEJS_16_X,
-      entry: join(__dirname, '/../src/product/index.js'),
+      entry: join(__dirname, '/../src/product/index.ts'),
     });
 
     productsTable.grantReadWriteData(productsFunction);
