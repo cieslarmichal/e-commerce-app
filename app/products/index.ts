@@ -7,7 +7,7 @@ import {
   UpdateItemCommand,
 } from '@aws-sdk/client-dynamodb';
 import { marshall, unmarshall } from '@aws-sdk/util-dynamodb';
-import { dynamoDbClient } from './dynamoDbClient';
+import { dynamoDbClient } from './shared/dynamoDbClient';
 import { v4 as uuid4 } from 'uuid';
 import { commonMiddleware } from './shared';
 

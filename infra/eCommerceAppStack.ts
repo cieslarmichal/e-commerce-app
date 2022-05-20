@@ -16,7 +16,7 @@ import {
   GetProductsLambda,
   UpdateProductLambda,
 } from './lambdaFunctions';
-import { OrdersQueue } from './queues/ordersQueue';
+import { OrdersQueue } from './queues';
 import { BasketsTable, OrdersTable, ProductsTable } from './tables';
 
 export class ECommerceAppStack extends Stack {
