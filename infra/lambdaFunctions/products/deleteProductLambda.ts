@@ -22,7 +22,7 @@ export class DeleteProductLambda extends Construct {
         DB_TABLE_NAME: properties.productsTable.tableName,
       },
       runtime: Runtime.NODEJS_16_X,
-      entry: join(__dirname, '/../../../src/products/deleteProduct.ts'),
+      entry: join(__dirname, '/../../../app/products/deleteProduct.ts'),
     });
 
     properties.productsTable.grantReadWriteData(deleteProductFunction);

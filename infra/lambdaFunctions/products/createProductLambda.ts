@@ -22,7 +22,7 @@ export class CreateProductLambda extends Construct {
         DB_TABLE_NAME: properties.productsTable.tableName,
       },
       runtime: Runtime.NODEJS_16_X,
-      entry: join(__dirname, '/../../../src/products/createProduct.ts'),
+      entry: join(__dirname, '/../../../app/products/createProduct.ts'),
     });
 
     properties.productsTable.grantReadWriteData(createProductFunction);

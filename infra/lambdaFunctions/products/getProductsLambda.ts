@@ -22,7 +22,7 @@ export class GetProductsLambda extends Construct {
         DB_TABLE_NAME: properties.productsTable.tableName,
       },
       runtime: Runtime.NODEJS_16_X,
-      entry: join(__dirname, '/../../../src/products/getProducts.ts'),
+      entry: join(__dirname, '/../../../app/products/getProducts.ts'),
     });
 
     properties.productsTable.grantReadWriteData(getProductsFunction);

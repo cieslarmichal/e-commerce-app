@@ -22,7 +22,7 @@ export class CreateOrderLambda extends Construct {
         DB_TABLE_NAME: properties.ordersTable.tableName,
       },
       runtime: Runtime.NODEJS_16_X,
-      entry: join(__dirname, '/../../../src/orders/createOrder.ts'),
+      entry: join(__dirname, '/../../../app/orders/createOrder.ts'),
     });
 
     properties.ordersTable.grantReadWriteData(createOrderFunction);
