@@ -9,8 +9,9 @@ import {
 import { marshall, unmarshall } from '@aws-sdk/util-dynamodb';
 import { dynamoDbClient } from './dynamoDbClient';
 import { v4 as uuid4 } from 'uuid';
+import { commonMiddleware } from './shared';
 
-exports.handler = async function (event: APIGatewayEvent): Promise<ProxyResult> {
+async function productsLambda(event: APIGatewayEvent): Promise<ProxyResult> {
   console.log(event);
 
   let body;
@@ -79,7 +80,7 @@ exports.handler = async function (event: APIGatewayEvent): Promise<ProxyResult> 
       }),
     };
   }
-};
+}
 
 const getProduct = async (productId: string) => {
   console.log('getProduct');
@@ -225,3 +226,5 @@ const updateProduct = async (productId: string, productProperties: any) => {
     throw error;
   }
 };
+
+export const handler = commonMiddleware(productsLambda);
