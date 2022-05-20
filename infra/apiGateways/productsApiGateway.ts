@@ -2,7 +2,7 @@ import { Cors, LambdaIntegration, RestApi } from 'aws-cdk-lib/aws-apigateway';
 import { IFunction } from 'aws-cdk-lib/aws-lambda';
 import { Construct } from 'constructs';
 
-export interface ApiGatewaysProperties {
+export interface ProductsApiGatewayProperties {
   readonly createProductLambda: IFunction;
   readonly getProductLambda: IFunction;
   readonly getProductsLambda: IFunction;
@@ -11,7 +11,7 @@ export interface ApiGatewaysProperties {
 }
 
 export class ProductsApiGateway extends Construct {
-  constructor(scope: Construct, id: string, properties: ApiGatewaysProperties) {
+  constructor(scope: Construct, id: string, properties: ProductsApiGatewayProperties) {
     super(scope, id);
 
     const restApi = new RestApi(this, 'ProductsApiGateway', {
