@@ -19,8 +19,10 @@ export class CheckoutBasketLambda extends Construct {
         externalModules: ['aws-sdk'],
       },
       environment: {
-        PRIMARY_KEY: 'id',
         DB_TABLE_NAME: properties.productsTable.tableName,
+        EVENT_SOURCE: 'com.ecommerce.basket.checkoutbasket',
+        EVENT_DETAIL_TYPE: 'CheckoutBasket',
+        EVENT_BUS_NAME: 'EventBus',
       },
       runtime: Runtime.NODEJS_16_X,
       entry: join(__dirname, '/../../../src/baskets/checkoutBasket.ts'),

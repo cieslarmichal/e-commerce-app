@@ -19,7 +19,6 @@ export class GetBasketsLambda extends Construct {
         externalModules: ['aws-sdk'],
       },
       environment: {
-        PRIMARY_KEY: 'id',
         DB_TABLE_NAME: properties.basketsTable.tableName,
       },
       runtime: Runtime.NODEJS_16_X,
