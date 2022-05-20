@@ -22,7 +22,7 @@ export class CheckoutBasketLambda extends Construct {
         DB_TABLE_NAME: properties.productsTable.tableName,
         EVENT_SOURCE: 'com.ecommerce.basket.checkoutbasket',
         EVENT_DETAIL_TYPE: 'CheckoutBasket',
-        EVENT_BUS_NAME: 'EventBus',
+        EVENT_BUS_NAME: 'CheckoutEventBus',
       },
       runtime: Runtime.NODEJS_16_X,
       entry: join(__dirname, '/../../../app/baskets/checkoutBasket.ts'),

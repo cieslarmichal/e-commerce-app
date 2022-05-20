@@ -4,16 +4,16 @@ import { IFunction } from 'aws-cdk-lib/aws-lambda';
 import { IQueue } from 'aws-cdk-lib/aws-sqs';
 import { Construct } from 'constructs';
 
-export interface EventBridgeProperties {
+export interface CheckoutEventBridgeProperties {
   readonly publisher: IFunction;
   readonly target: IQueue;
 }
 
-export class EventBridge extends Construct {
-  constructor(scope: Construct, id: string, properties: EventBridgeProperties) {
+export class CheckoutEventBridge extends Construct {
+  constructor(scope: Construct, id: string, properties: CheckoutEventBridgeProperties) {
     super(scope, id);
 
-    const eventBus = new EventBus(this, 'EventBus', { eventBusName: 'EventBus' });
+    const eventBus = new EventBus(this, 'CheckoutEventBus', { eventBusName: 'CheckoutEventBus' });
 
     const checkoutBasketRule = new Rule(this, 'CheckoutBasketRule', {
       eventBus,

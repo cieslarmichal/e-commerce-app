@@ -2,7 +2,7 @@ import { Stack, StackProps } from 'aws-cdk-lib';
 import { Construct } from 'constructs';
 import { ApiGateways } from './apiGateways';
 import { Database } from './database';
-import { EventBridge } from './eventBridge';
+import { EventBridge } from './eventBridges/checkoutEventBridge';
 import { Microservices } from './microservices';
 import { OrdersQueue } from './ordersQueue';
 
