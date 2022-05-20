@@ -4,7 +4,7 @@ import { ApiGateways } from './apiGateways';
 import { Database } from './database';
 import { EventBridge } from './eventBridges/checkoutEventBridge';
 import { Microservices } from './microservices';
-import { OrdersQueue } from './ordersQueue';
+import { OrdersQueue } from './queues/ordersQueue';
 
 export class ECommerceAppStack extends Stack {
   constructor(scope: Construct, id: string, props?: StackProps) {
