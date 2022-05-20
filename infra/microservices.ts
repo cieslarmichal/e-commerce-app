@@ -35,7 +35,7 @@ export class Microservices extends Construct {
         DB_TABLE_NAME: productsTable.tableName,
       },
       runtime: Runtime.NODEJS_16_X,
-      entry: join(__dirname, '/../src/product/index.ts'),
+      entry: join(__dirname, '/../src/products/index.ts'),
     });
 
     productsTable.grantReadWriteData(productsFunction);
@@ -56,7 +56,7 @@ export class Microservices extends Construct {
         EVENT_BUS_NAME: 'EventBus',
       },
       runtime: Runtime.NODEJS_16_X,
-      entry: join(__dirname, '/../src/basket/index.js'),
+      entry: join(__dirname, '/../src/baskets/index.js'),
     });
 
     basketsTable.grantReadWriteData(basketsFunction);
@@ -75,7 +75,7 @@ export class Microservices extends Construct {
         DB_TABLE_NAME: ordersTable.tableName,
       },
       runtime: Runtime.NODEJS_16_X,
-      entry: join(__dirname, '/../src/order/index.js'),
+      entry: join(__dirname, '/../src/orders/index.js'),
     });
 
     ordersTable.grantReadWriteData(ordersFunction);
