@@ -3,7 +3,6 @@ import { IFunction } from 'aws-cdk-lib/aws-lambda';
 import { Construct } from 'constructs';
 
 export interface OrdersApiGatewayProperties {
-  readonly getOrderLambda: IFunction;
   readonly getOrdersLambda: IFunction;
 }
 
@@ -21,9 +20,5 @@ export class OrdersApiGateway extends Construct {
     const orders = restApi.root.addResource('orders');
 
     orders.addMethod('GET', new LambdaIntegration(properties.getOrdersLambda));
-
-    const order = orders.addResource('{email}');
-
-    order.addMethod('GET', new LambdaIntegration(properties.getOrderLambda));
   }
 }
