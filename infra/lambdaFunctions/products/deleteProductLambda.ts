@@ -11,8 +11,8 @@ export interface DeleteProductLambdaProperties {
 export class DeleteProductLambda extends Construct {
   public readonly instance: NodejsFunction;
 
-  constructor(scope: Construct, id: string, properties: DeleteProductLambdaProperties) {
-    super(scope, id);
+  constructor(scope: Construct, properties: DeleteProductLambdaProperties) {
+    super(scope, 'DeleteProductLambdaFunction');
 
     const deleteProductFunction = new NodejsFunction(this, 'DeleteProductLambdaFunction', {
       bundling: {

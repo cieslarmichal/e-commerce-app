@@ -11,8 +11,8 @@ export interface GetBasketLambdaProperties {
 export class GetBasketLambda extends Construct {
   public readonly instance: NodejsFunction;
 
-  constructor(scope: Construct, id: string, properties: GetBasketLambdaProperties) {
-    super(scope, id);
+  constructor(scope: Construct, properties: GetBasketLambdaProperties) {
+    super(scope, 'GetBasketLambdaFunction');
 
     const getBasketFunction = new NodejsFunction(this, 'GetBasketLambdaFunction', {
       bundling: {

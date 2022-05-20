@@ -11,8 +11,8 @@ export interface BasketsApiGatewayProperties {
 }
 
 export class BasketsApiGateway extends Construct {
-  constructor(scope: Construct, id: string, properties: BasketsApiGatewayProperties) {
-    super(scope, id);
+  constructor(scope: Construct, properties: BasketsApiGatewayProperties) {
+    super(scope, 'BasketsApiGateway');
 
     const restApi = new RestApi(this, 'BasketsApiGateway', {
       defaultCorsPreflightOptions: {

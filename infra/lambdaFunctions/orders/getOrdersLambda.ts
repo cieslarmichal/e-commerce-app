@@ -11,8 +11,8 @@ export interface GetOrdersLambdaProperties {
 export class GetOrdersLambda extends Construct {
   public readonly instance: NodejsFunction;
 
-  constructor(scope: Construct, id: string, properties: GetOrdersLambdaProperties) {
-    super(scope, id);
+  constructor(scope: Construct, properties: GetOrdersLambdaProperties) {
+    super(scope, 'GetOrdersLambdaFunction');
 
     const getOrdersFunction = new NodejsFunction(this, 'GetOrdersLambdaFunction', {
       bundling: {

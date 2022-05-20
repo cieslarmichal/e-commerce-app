@@ -7,8 +7,8 @@ export interface OrdersApiGatewayProperties {
 }
 
 export class OrdersApiGateway extends Construct {
-  constructor(scope: Construct, id: string, properties: OrdersApiGatewayProperties) {
-    super(scope, id);
+  constructor(scope: Construct, properties: OrdersApiGatewayProperties) {
+    super(scope, 'OrdersApiGateway');
 
     const restApi = new RestApi(this, 'OrdersApiGateway', {
       defaultCorsPreflightOptions: {

@@ -11,8 +11,8 @@ export interface UpdateProductLambdaProperties {
 export class UpdateProductLambda extends Construct {
   public readonly instance: NodejsFunction;
 
-  constructor(scope: Construct, id: string, properties: UpdateProductLambdaProperties) {
-    super(scope, id);
+  constructor(scope: Construct, properties: UpdateProductLambdaProperties) {
+    super(scope, 'UpdateProductLambdaFunction');
 
     const updateProductFunction = new NodejsFunction(this, 'UpdateProductLambdaFunction', {
       bundling: {

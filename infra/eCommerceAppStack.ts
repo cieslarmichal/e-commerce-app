@@ -1,36 +1,74 @@
 import { Stack, StackProps } from 'aws-cdk-lib';
 import { Construct } from 'constructs';
-import { ApiGateways } from './apiGateways';
-import { Database } from './database';
-import { EventBridge } from './eventBridges/checkoutEventBridge';
-import { Microservices } from './microservices';
+import { BasketsApiGateway, OrdersApiGateway, ProductsApiGateway } from './apiGateways';
+import { CheckoutEventBridge } from './eventBridges';
+import {
+  CheckoutBasketLambda,
+  CreateBasketLambda,
+  CreateOrderLambda,
+  CreateProductLambda,
+  DeleteBasketLambda,
+  DeleteProductLambda,
+  GetBasketLambda,
+  GetBasketsLambda,
+  GetOrdersLambda,
+  GetProductLambda,
+  GetProductsLambda,
+  UpdateProductLambda,
+} from './lambdaFunctions';
 import { OrdersQueue } from './queues/ordersQueue';
+import { BasketsTable, OrdersTable, ProductsTable } from './tables';
 
 export class ECommerceAppStack extends Stack {
   constructor(scope: Construct, id: string, props?: StackProps) {
     super(scope, id, props);
 
-    const database = new Database(this, 'Database');
+    const productsTable = new ProductsTable(this);
+    const basketsTable = new BasketsTable(this);
+    const ordersTable = new OrdersTable(this);
 
-    const microservices = new Microservices(this, 'Microservices', {
-      productsTable: database.productsTable,
-      basketsTable: database.basketsTable,
-      ordersTable: database.ordersTable,
+    const createProductLambda = new CreateProductLambda(this, { productsTable: productsTable.instance });
+    const getProductLambda = new GetProductLambda(this, { productsTable: productsTable.instance });
+    const getProductsLambda = new GetProductsLambda(this, { productsTable: productsTable.instance });
+    const updateProductLambda = new UpdateProductLambda(this, { productsTable: productsTable.instance });
+    const deleteProductLambda = new DeleteProductLambda(this, { productsTable: productsTable.instance });
+
+    const createBasketLambda = new CreateBasketLambda(this, { basketsTable: basketsTable.instance });
+    const getBasketLambda = new GetBasketLambda(this, { basketsTable: basketsTable.instance });
+    const getBasketsLambda = new GetBasketsLambda(this, { basketsTable: basketsTable.instance });
+    const deleteBasketLambda = new DeleteBasketLambda(this, { basketsTable: basketsTable.instance });
+    const checkoutBasketLambda = new CheckoutBasketLambda(this, { basketsTable: basketsTable.instance });
+
+    const createOrderLambda = new CreateOrderLambda(this, { ordersTable: ordersTable.instance });
+    const getOrdersLambda = new GetOrdersLambda(this, { ordersTable: ordersTable.instance });
+
+    new ProductsApiGateway(this, {
+      createProductLambda: createProductLambda.instance,
+      getProductLambda: getProductLambda.instance,
+      getProductsLambda: getProductsLambda.instance,
+      deleteProductLambda: deleteProductLambda.instance,
+      updateProductLambda: updateProductLambda.instance,
     });
 
-    new ApiGateways(this, 'ApiGateways', {
-      productsMicroservice: microservices.productsMicroservice,
-      basketsMicroservice: microservices.basketsMicroservice,
-      ordersMicroservice: microservices.ordersMicroservice,
+    new BasketsApiGateway(this, {
+      createBasketLambda: createBasketLambda.instance,
+      getBasketLambda: getBasketLambda.instance,
+      getBasketsLambda: getBasketsLambda.instance,
+      deleteBasketLambda: deleteBasketLambda.instance,
+      checkoutBasketLambda: checkoutBasketLambda.instance,
     });
 
-    const queue = new OrdersQueue(this, 'Queue', {
-      consumer: microservices.ordersMicroservice,
+    new OrdersApiGateway(this, {
+      getOrdersLambda: getOrdersLambda.instance,
     });
 
-    new EventBridge(this, 'EventBridge', {
-      publisher: microservices.basketsMicroservice,
-      target: queue.instance,
+    const ordersQueue = new OrdersQueue(this, {
+      consumer: createOrderLambda.instance,
+    });
+
+    new CheckoutEventBridge(this, {
+      publisher: checkoutBasketLambda.instance,
+      target: ordersQueue.instance,
     });
   }
 }

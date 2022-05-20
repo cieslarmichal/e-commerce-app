@@ -5,21 +5,21 @@ import { Construct } from 'constructs';
 import { join } from 'path';
 
 export interface CheckoutBasketLambdaProperties {
-  readonly productsTable: ITable;
+  readonly basketsTable: ITable;
 }
 
 export class CheckoutBasketLambda extends Construct {
   public readonly instance: NodejsFunction;
 
-  constructor(scope: Construct, id: string, properties: CheckoutBasketLambdaProperties) {
-    super(scope, id);
+  constructor(scope: Construct, properties: CheckoutBasketLambdaProperties) {
+    super(scope, 'CheckoutBasketLambdaFunction');
 
     const checkoutBasketFunction = new NodejsFunction(this, 'CheckoutBasketLambdaFunction', {
       bundling: {
         externalModules: ['aws-sdk'],
       },
       environment: {
-        DB_TABLE_NAME: properties.productsTable.tableName,
+        DB_TABLE_NAME: properties.basketsTable.tableName,
         EVENT_SOURCE: 'com.ecommerce.basket.checkoutbasket',
         EVENT_DETAIL_TYPE: 'CheckoutBasket',
         EVENT_BUS_NAME: 'CheckoutEventBus',
@@ -28,7 +28,7 @@ export class CheckoutBasketLambda extends Construct {
       entry: join(__dirname, '/../../../app/baskets/checkoutBasket.ts'),
     });
 
-    properties.productsTable.grantReadWriteData(checkoutBasketFunction);
+    properties.basketsTable.grantReadWriteData(checkoutBasketFunction);
 
     this.instance = checkoutBasketFunction;
   }

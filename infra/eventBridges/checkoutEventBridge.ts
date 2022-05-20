@@ -10,8 +10,8 @@ export interface CheckoutEventBridgeProperties {
 }
 
 export class CheckoutEventBridge extends Construct {
-  constructor(scope: Construct, id: string, properties: CheckoutEventBridgeProperties) {
-    super(scope, id);
+  constructor(scope: Construct, properties: CheckoutEventBridgeProperties) {
+    super(scope, 'CheckoutEventBridge');
 
     const eventBus = new EventBus(this, 'CheckoutEventBus', { eventBusName: 'CheckoutEventBus' });
 

@@ -11,8 +11,8 @@ export interface ProductsApiGatewayProperties {
 }
 
 export class ProductsApiGateway extends Construct {
-  constructor(scope: Construct, id: string, properties: ProductsApiGatewayProperties) {
-    super(scope, id);
+  constructor(scope: Construct, properties: ProductsApiGatewayProperties) {
+    super(scope, 'ProductsApiGateway');
 
     const restApi = new RestApi(this, 'ProductsApiGateway', {
       defaultCorsPreflightOptions: {

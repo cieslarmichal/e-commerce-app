@@ -4,8 +4,8 @@ import { Construct } from 'constructs';
 
 export class OrdersTable extends Construct {
   public readonly instance: ITable;
-  constructor(scope: Construct, id: string) {
-    super(scope, id);
+  constructor(scope: Construct) {
+    super(scope, 'OrdersTable');
 
     this.instance = new Table(this, 'OrdersTable', {
       partitionKey: {

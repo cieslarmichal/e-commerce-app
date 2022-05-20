@@ -11,8 +11,8 @@ export interface OrdersQueueProperties {
 export class OrdersQueue extends Construct {
   public readonly instance: IQueue;
 
-  constructor(scope: Construct, id: string, properties: OrdersQueueProperties) {
-    super(scope, id);
+  constructor(scope: Construct, properties: OrdersQueueProperties) {
+    super(scope, 'OrdersQueue');
 
     this.instance = new Queue(this, 'OrdersQueue', {
       queueName: 'OrdersQueue',

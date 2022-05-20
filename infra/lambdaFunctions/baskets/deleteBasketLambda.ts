@@ -11,8 +11,8 @@ export interface DeleteBasketLambdaProperties {
 export class DeleteBasketLambda extends Construct {
   public readonly instance: NodejsFunction;
 
-  constructor(scope: Construct, id: string, properties: DeleteBasketLambdaProperties) {
-    super(scope, id);
+  constructor(scope: Construct, properties: DeleteBasketLambdaProperties) {
+    super(scope, 'DeleteBasketLambdaFunction');
 
     const deleteBasketFunction = new NodejsFunction(this, 'DeleteBasketLambdaFunction', {
       bundling: {

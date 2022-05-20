@@ -11,8 +11,8 @@ export interface GetProductLambdaProperties {
 export class GetProductLambda extends Construct {
   public readonly instance: NodejsFunction;
 
-  constructor(scope: Construct, id: string, properties: GetProductLambdaProperties) {
-    super(scope, id);
+  constructor(scope: Construct, properties: GetProductLambdaProperties) {
+    super(scope, 'GetProductLambdaFunction');
 
     const getProductFunction = new NodejsFunction(this, 'GetProductLambdaFunction', {
       bundling: {
