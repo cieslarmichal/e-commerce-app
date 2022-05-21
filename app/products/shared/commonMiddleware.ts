@@ -1,5 +1,7 @@
 import middy from '@middy/core';
-import httpErrorHandler from '@middy/http-error-handler';
 import httpEventNormalizer from '@middy/http-event-normalizer';
+import httpSecurityHeaders from '@middy/http-security-headers';
+import JSONErrorHandlerMiddleware from 'middy-middleware-json-error-handler';
 
-export const commonMiddleware = (handler: any) => middy(handler).use([httpEventNormalizer(), httpErrorHandler()]);
+export const commonMiddleware = (handler: any) =>
+  middy(handler).use([httpSecurityHeaders(), httpEventNormalizer(), JSONErrorHandlerMiddleware()]);

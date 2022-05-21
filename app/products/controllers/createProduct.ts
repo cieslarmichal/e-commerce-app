@@ -5,18 +5,27 @@ import { commonMiddleware, dynamoDbClient } from '../shared';
 import { StatusCodes } from 'http-status-codes';
 import { v4 as uuid4 } from 'uuid';
 import { RecordToInstanceTransformer } from '../../common/dist';
+import { CreateProductBodyDto } from './dtos';
+import createError from 'http-errors';
 
 async function createProduct(event: APIGatewayEvent): Promise<ProxyResult> {
-  const createAddressBodyDto = RecordToInstanceTransformer.strictTransform(event.body, CreateAddressBodyDto);
+  let createProductBodyDto: CreateProductBodyDto;
+
+  try {
+    createProductBodyDto = RecordToInstanceTransformer.strictTransform(
+      event.body ? JSON.parse(event.body) : {},
+      CreateProductBodyDto,
+    );
+  } catch (error: any) {
+    throw new createError.BadRequest(error.message);
+  }
 
   const productId = uuid4();
-
-  productProperties.id = productId;
 
   const result = await dynamoDbClient.send(
     new PutItemCommand({
       TableName: process.env.DB_TABLE_NAME,
-      Item: marshall(productProperties || {}),
+      Item: marshall({ ...createProductBodyDto, id: productId } || {}),
     }),
   );
 
