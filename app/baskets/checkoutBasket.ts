@@ -10,6 +10,10 @@ async function checkoutBasket(event: APIGatewayEvent): Promise<ProxyResult> {
 
   const basket = await getBasketByEmail(basketProperties.email);
 
+  console.log('basketProperties', basketProperties);
+
+  console.log('basket', basket);
+
   const checkoutPayload = await prepareOrderPayload(basketProperties, basket);
 
   console.log('checkout payload', checkoutPayload);
