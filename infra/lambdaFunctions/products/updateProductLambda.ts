@@ -22,7 +22,7 @@ export class UpdateProductLambda extends Construct {
         DB_TABLE_NAME: properties.productsTable.tableName,
       },
       runtime: Runtime.NODEJS_16_X,
-      entry: join(__dirname, '/../../../app/products/updateProduct.ts'),
+      entry: join(__dirname, '/../../../app/products/controllers/updateProduct.ts'),
     });
 
     properties.productsTable.grantReadWriteData(updateProductFunction);

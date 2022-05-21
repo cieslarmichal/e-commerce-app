@@ -1,5 +1,5 @@
 {
-  "name": "@towersoft/e-commerce-common",
+  "name": "e-commerce-common",
   "version": "1.0.1",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
