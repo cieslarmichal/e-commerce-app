@@ -1,10 +1,6 @@
 import { IsString } from 'class-validator';
 
-export class RemoveProductParamDto {
+export class DeleteProductParamDto {
   @IsString()
   public readonly id: string;
-}
-
-export class RemoveProductResponseDto {
-  public constructor(public readonly statusCode: number) {}
 }

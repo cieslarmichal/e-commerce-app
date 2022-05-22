@@ -16,7 +16,7 @@ export class ProductDto {
 
   @IsOptional()
   @IsString()
-  public readonly description: string;
+  public readonly description?: string | null;
 
   public static readonly create = RecordToInstanceTransformer.transformFactory(ProductDto);
 }

@@ -13,13 +13,9 @@ export class CreateProductBodyDto {
 
   @IsOptional()
   @IsString()
-  public readonly description: string;
+  public readonly description?: string | null;
 }
 
 export class CreateProductResponseData {
   public constructor(public readonly product: ProductDto) {}
-}
-
-export class CreateProductResponseDto {
-  public constructor(public readonly data: CreateProductResponseData, public readonly statusCode: number) {}
 }

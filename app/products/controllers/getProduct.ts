@@ -1,34 +1,37 @@
-import { GetItemCommand } from '@aws-sdk/client-dynamodb';
-import { marshall, unmarshall } from '@aws-sdk/util-dynamodb';
 import { APIGatewayEvent, ProxyResult } from 'aws-lambda';
 import { commonMiddleware, dynamoDbClient } from '../shared';
 import { StatusCodes } from 'http-status-codes';
+import { ProductRepository } from '../domain/repositories/productRepository';
+import { ProductMapper } from '../domain/mappers';
+import { ProductService } from '../domain/services/productService';
+import { LoggerService, RecordToInstanceTransformer, ValidationError } from '../../common';
+import createError from 'http-errors';
+import { GetProductParamDto, GetProductResponseData } from './dtos';
+
+const productRepository = new ProductRepository(dynamoDbClient, new ProductMapper());
+const productService = new ProductService(productRepository, new LoggerService());
 
 async function getProduct(event: APIGatewayEvent): Promise<ProxyResult> {
-  const id = event.pathParameters!.id as string;
+  let getProductParamDto: GetProductParamDto;
 
   try {
-    const { Item } = await dynamoDbClient.send(
-      new GetItemCommand({
-        TableName: process.env.DB_TABLE_NAME,
-        Key: marshall({ id }),
-      }),
-    );
-
-    console.log(Item);
-
-    const data = Item ? unmarshall(Item) : {};
-
-    return {
-      statusCode: StatusCodes.OK,
-      body: JSON.stringify({
-        data,
-      }),
-    };
+    getProductParamDto = RecordToInstanceTransformer.strictTransform(event.pathParameters || {}, GetProductParamDto);
   } catch (error) {
-    console.error(error);
-    throw error;
+    if (error instanceof ValidationError) {
+      throw new createError.BadRequest(error.message);
+    }
   }
+
+  const product = await productService.findProduct(getProductParamDto!.id);
+
+  const responseData = new GetProductResponseData(product);
+
+  return {
+    statusCode: StatusCodes.OK,
+    body: JSON.stringify({
+      data: responseData,
+    }),
+  };
 }
 
 export const handler = commonMiddleware(getProduct);

@@ -5,36 +5,34 @@ import {
   DeleteItemCommand,
   DynamoDBClient,
   GetItemCommand,
+  PutItemCommand,
   ScanCommand,
   UpdateItemCommand,
 } from '@aws-sdk/client-dynamodb';
 import { marshall, unmarshall } from '@aws-sdk/util-dynamodb';
 import { ProductMapper } from '../mappers';
+import { v4 as uuid4 } from 'uuid';
 
 export class ProductRepository {
   public constructor(private readonly dynamoDbClient: DynamoDBClient, private readonly productMapper: ProductMapper) {}
 
   public async createOne(productData: Product): Promise<ProductDto> {
-    const response = await this.dynamoDbClient.send(
-      new UpdateItemCommand({
+    productData.id = uuid4();
+
+    await this.dynamoDbClient.send(
+      new PutItemCommand({
         TableName: process.env.DB_TABLE_NAME,
-        Key: marshall({ id: productData.id }),
-        UpdateExpression: `SET ${Object.keys(productData)
-          .map((key) => `${key} = :${key}`)
-          .join(', ')}`,
-        ExpressionAttributeValues: Object.keys(productData).reduce(
-          (previousValue, currentValue) => ({
-            ...previousValue,
-            // @ts-ignore
-            [`:${currentValue}`]: productData[currentValue],
-          }),
-          {},
-        ),
-        ReturnValues: 'ALL_NEW',
+        Item: marshall(productData || {}),
       }),
     );
 
-    return this.productMapper.mapEntityToDto(response.Attributes || {});
+    const createdProduct = await this.findOne(productData.id);
+
+    if (!createdProduct) {
+      throw new ProductNotFoundError(productData.id);
+    }
+
+    return createdProduct;
   }
 
   public async findOne(id: string): Promise<ProductDto | null> {
@@ -84,26 +82,42 @@ export class ProductRepository {
       throw new ProductNotFoundError(id);
     }
 
+    // @ts-ignore
+    const productDataKeysWithDefinedValues = Object.keys(productData).filter((key) => productData[key]);
+
+    console.log(productDataKeysWithDefinedValues);
+
     const response = await this.dynamoDbClient.send(
       new UpdateItemCommand({
         TableName: process.env.DB_TABLE_NAME,
         Key: marshall({ id }),
-        UpdateExpression: `SET ${Object.keys(productData)
-          .map((key) => `${key} = :${key}`)
+        UpdateExpression: `SET ${productDataKeysWithDefinedValues
+          .map((_, index) => `#key${index} = :value${index}`)
           .join(', ')}`,
-        ExpressionAttributeValues: Object.keys(productData).reduce(
-          (previousValue, currentValue) => ({
+        ExpressionAttributeNames: productDataKeysWithDefinedValues.reduce(
+          (previousValue, currentValue, index) => ({
             ...previousValue,
-            // @ts-ignore
-            [`:${currentValue}`]: productData[currentValue],
+            [`#key${index}`]: currentValue,
           }),
           {},
+        ),
+        ExpressionAttributeValues: marshall(
+          productDataKeysWithDefinedValues.reduce(
+            (previousValue, currentValue, index) => ({
+              ...previousValue,
+              // @ts-ignore
+              [`:value${index}`]: productData[currentValue],
+            }),
+            {},
+          ),
         ),
         ReturnValues: 'ALL_NEW',
       }),
     );
 
-    return this.productMapper.mapEntityToDto(response.Attributes || {});
+    const updatedProduct = response.Attributes ? unmarshall(response.Attributes) : {};
+
+    return this.productMapper.mapEntityToDto(updatedProduct);
   }
 
   public async removeOne(id: string): Promise<void> {

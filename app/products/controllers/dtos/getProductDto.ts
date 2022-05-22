@@ -9,7 +9,3 @@ export class GetProductParamDto {
 export class GetProductResponseData {
   public constructor(public readonly product: ProductDto) {}
 }
-
-export class GetProductResponseDto {
-  public constructor(public readonly data: GetProductResponseData, public readonly statusCode: number) {}
-}

@@ -3,7 +3,6 @@ import { CreateProductData, UpdateProductData } from './types';
 import { LoggerService } from '../../../common';
 import { ProductRepository } from '../repositories/productRepository';
 import { ProductNotFoundError } from '../errors';
-import { v4 as uuid4 } from 'uuid';
 
 export class ProductService {
   public constructor(
@@ -14,10 +13,12 @@ export class ProductService {
   public async createProduct(productData: CreateProductData): Promise<ProductDto> {
     this.loggerService.debug('Creating product...');
 
-    const id = uuid4();
-
-    productData.id = id;
-    const product = await this.productRepository.createOne(productData);
+    const product = await this.productRepository.createOne({
+      name: productData.name,
+      category: productData.category,
+      price: productData.price,
+      description: productData.description || null,
+    });
 
     this.loggerService.info('Product created.', { productId: product.id });
 
@@ -25,11 +26,15 @@ export class ProductService {
   }
 
   public async findProduct(productId: string): Promise<ProductDto> {
-    const product = await this.productRepository.findOneById(productId);
+    this.loggerService.debug('Finding product...', { productId });
+
+    const product = await this.productRepository.findOne(productId);
 
     if (!product) {
       throw new ProductNotFoundError(productId);
     }
+
+    this.loggerService.info('Product found.', { productId });
 
     return product;
   }

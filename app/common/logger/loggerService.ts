@@ -1,4 +1,4 @@
-import Logger, { LogLevel } from 'bunyan';
+import Logger from 'bunyan';
 import bunyan from 'bunyan';
 import { LogContext } from './types';
 
@@ -6,9 +6,7 @@ export class LoggerService {
   private readonly instance: Logger;
 
   public constructor() {
-    const logLevel = process.env.LOG_LEVEL as LogLevel;
-
-    this.instance = bunyan.createLogger({ name: 'loggerService', level: logLevel });
+    this.instance = bunyan.createLogger({ name: 'loggerService', level: 'debug' });
   }
 
   public fatal(message: string, context?: LogContext): void {

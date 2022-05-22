@@ -1,31 +1,26 @@
-import { ScanCommand } from '@aws-sdk/client-dynamodb';
-import { unmarshall } from '@aws-sdk/util-dynamodb';
 import { APIGatewayEvent, ProxyResult } from 'aws-lambda';
 import { commonMiddleware, dynamoDbClient } from '../shared';
 import { StatusCodes } from 'http-status-codes';
+import { ProductRepository } from '../domain/repositories/productRepository';
+import { ProductMapper } from '../domain/mappers';
+import { ProductService } from '../domain/services/productService';
+import { LoggerService } from '../../common';
+import { GetProductsResponseData } from './dtos';
+
+const productRepository = new ProductRepository(dynamoDbClient, new ProductMapper());
+const productService = new ProductService(productRepository, new LoggerService());
 
 async function getProducts(event: APIGatewayEvent): Promise<ProxyResult> {
-  try {
-    const { Items } = await dynamoDbClient.send(
-      new ScanCommand({
-        TableName: process.env.DB_TABLE_NAME,
-      }),
-    );
+  const products = await productService.findProducts();
 
-    console.log(Items);
+  const responseData = new GetProductsResponseData(products);
 
-    const data = Items ? Items.map((item) => unmarshall(item)) : {};
-
-    return {
-      statusCode: StatusCodes.OK,
-      body: JSON.stringify({
-        data,
-      }),
-    };
-  } catch (error) {
-    console.error(error);
-    throw error;
-  }
+  return {
+    statusCode: StatusCodes.OK,
+    body: JSON.stringify({
+      data: responseData,
+    }),
+  };
 }
 
 export const handler = commonMiddleware(getProducts);

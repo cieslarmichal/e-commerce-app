@@ -19,7 +19,3 @@ export class UpdateProductBodyDto {
 export class UpdateProductResponseData {
   public constructor(public readonly product: ProductDto) {}
 }
-
-export class UpdateProductResponseDto {
-  public constructor(public readonly data: UpdateProductResponseData, public readonly statusCode: number) {}
-}

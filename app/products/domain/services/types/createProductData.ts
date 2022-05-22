@@ -12,5 +12,5 @@ export class CreateProductData {
 
   @IsOptional()
   @IsString()
-  public readonly description: string;
+  public readonly description?: string | null;
 }
