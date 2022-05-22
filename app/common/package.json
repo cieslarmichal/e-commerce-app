@@ -11,10 +11,12 @@
     "build": "npm run clean && tsc"
   },
   "dependencies": {
+    "bunyan": "^1.8.15",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.13.2"
   },
   "devDependencies": {
+    "@types/bunyan": "^1.8.8",
     "del-cli": "^4.0.1"
   },
   "author": "Michal Cieslar",
