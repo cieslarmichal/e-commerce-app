@@ -3,8 +3,7 @@ import { marshall } from '@aws-sdk/util-dynamodb';
 import { APIGatewayEvent, ProxyResult } from 'aws-lambda';
 import { commonMiddleware, dynamoDbClient } from '../shared';
 import { StatusCodes } from 'http-status-codes';
-import { v4 as uuid4 } from 'uuid';
-import { RecordToInstanceTransformer } from '../../common/dist';
+import { RecordToInstanceTransformer } from '../../common';
 import { CreateProductBodyDto } from './dtos';
 import createError from 'http-errors';
 
