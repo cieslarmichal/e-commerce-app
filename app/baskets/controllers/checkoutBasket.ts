@@ -1,5 +1,5 @@
 import { APIGatewayEvent, ProxyResult } from 'aws-lambda';
-import { commonMiddleware, eventBridgeClient } from './shared';
+import { commonMiddleware, eventBridgeClient } from '../shared';
 import { StatusCodes } from 'http-status-codes';
 import { PutEventsCommand } from '@aws-sdk/client-eventbridge';
 import { deleteBasketByEmail } from './deleteBasket';

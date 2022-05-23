@@ -1,0 +1,15 @@
+import { Allow, IsString, IsUUID } from 'class-validator';
+import { RecordToInstanceTransformer } from '../../../common';
+
+export class BasketDto {
+  @IsUUID('4')
+  public readonly id: string;
+
+  @IsString()
+  public readonly email: string;
+
+  @Allow()
+  public readonly items: string[];
+
+  public static readonly create = RecordToInstanceTransformer.transformFactory(BasketDto);
+}
