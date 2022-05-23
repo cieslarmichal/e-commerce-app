@@ -1,8 +1,8 @@
-import { IsString } from 'class-validator';
+import { IsEmail } from 'class-validator';
 import { BasketDto } from './basketDto';
 
 export class CreateBasketBodyDto {
-  @IsString()
+  @IsEmail()
   public readonly email: string;
 }
 

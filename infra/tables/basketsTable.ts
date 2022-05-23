@@ -9,7 +9,7 @@ export class BasketsTable extends Construct {
 
     this.instance = new Table(this, 'BasketsTable', {
       partitionKey: {
-        name: 'email',
+        name: 'id',
         type: AttributeType.STRING,
       },
       tableName: 'baskets',
