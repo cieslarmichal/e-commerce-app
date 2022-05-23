@@ -3,6 +3,7 @@ import { Construct } from 'constructs';
 import { BasketsApiGateway, OrdersApiGateway, ProductsApiGateway } from './apiGateways';
 import { CheckoutEventBridge } from './eventBridges';
 import {
+  AddProductToBasketLambda,
   CheckoutBasketLambda,
   CreateBasketLambda,
   CreateOrderLambda,
@@ -38,6 +39,7 @@ export class ECommerceAppStack extends Stack {
     const getBasketsLambda = new GetBasketsLambda(this, { basketsTable: basketsTable.instance });
     const deleteBasketLambda = new DeleteBasketLambda(this, { basketsTable: basketsTable.instance });
     const checkoutBasketLambda = new CheckoutBasketLambda(this, { basketsTable: basketsTable.instance });
+    const addProductToBasketLambda = new AddProductToBasketLambda(this, { basketsTable: basketsTable.instance });
 
     const createOrderLambda = new CreateOrderLambda(this, { ordersTable: ordersTable.instance });
     const getOrdersLambda = new GetOrdersLambda(this, { ordersTable: ordersTable.instance });
@@ -56,6 +58,7 @@ export class ECommerceAppStack extends Stack {
       getBasketsLambda: getBasketsLambda.instance,
       deleteBasketLambda: deleteBasketLambda.instance,
       checkoutBasketLambda: checkoutBasketLambda.instance,
+      addProductToBasketLambda: addProductToBasketLambda.instance,
     });
 
     new OrdersApiGateway(this, {

@@ -8,6 +8,7 @@ export interface BasketsApiGatewayProperties {
   readonly getBasketsLambda: IFunction;
   readonly deleteBasketLambda: IFunction;
   readonly checkoutBasketLambda: IFunction;
+  readonly addProductToBasketLambda: IFunction;
 }
 
 export class BasketsApiGateway extends Construct {
@@ -26,10 +27,14 @@ export class BasketsApiGateway extends Construct {
     baskets.addMethod('POST', new LambdaIntegration(properties.createBasketLambda));
     baskets.addMethod('GET', new LambdaIntegration(properties.getBasketsLambda));
 
-    const basket = baskets.addResource('{email}');
+    const basket = baskets.addResource('{id}');
 
     basket.addMethod('GET', new LambdaIntegration(properties.getBasketLambda));
     basket.addMethod('DELETE', new LambdaIntegration(properties.deleteBasketLambda));
+
+    const basketProducts = basket.addResource('products');
+
+    basketProducts.addMethod('POST', new LambdaIntegration(properties.addProductToBasketLambda));
 
     const basketCheckout = baskets.addResource('checkout');
 
