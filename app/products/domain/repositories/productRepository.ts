@@ -75,7 +75,7 @@ export class ProductRepository {
     return products.map((product) => this.productMapper.mapEntityToDto(product));
   }
 
-  public async updateOne(id: string, productData: Partial<Product>): Promise<ProductDto> {
+  public async updateOne(id: string, productData: Partial<Omit<Product, 'id'>>): Promise<ProductDto> {
     const productExists = await this.exists(id);
 
     if (!productExists) {
