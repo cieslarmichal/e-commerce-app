@@ -3,11 +3,11 @@ import { IsOptional, IsString, IsUUID, IsArray } from 'class-validator';
 export class Basket {
   @IsUUID('4')
   @IsOptional()
-  public readonly id: string;
+  public id?: string;
 
   @IsString()
-  public readonly email: string;
+  public email: string;
 
   @IsArray()
-  public readonly items: string[];
+  public items: string[];
 }
