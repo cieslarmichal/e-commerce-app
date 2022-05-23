@@ -22,7 +22,7 @@ export class CreateBasketLambda extends Construct {
         DB_TABLE_NAME: properties.basketsTable.tableName,
       },
       runtime: Runtime.NODEJS_16_X,
-      entry: join(__dirname, '/../../../app/baskets/createBasket.ts'),
+      entry: join(__dirname, '/../../../app/baskets/controllers/createBasket.ts'),
     });
 
     properties.basketsTable.grantReadWriteData(createBasketFunction);

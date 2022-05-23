@@ -25,7 +25,7 @@ export class CheckoutBasketLambda extends Construct {
         EVENT_BUS_NAME: 'CheckoutEventBus',
       },
       runtime: Runtime.NODEJS_16_X,
-      entry: join(__dirname, '/../../../app/baskets/checkoutBasket.ts'),
+      entry: join(__dirname, '/../../../app/baskets/controllers/checkoutBasket.ts'),
     });
 
     properties.basketsTable.grantReadWriteData(checkoutBasketFunction);
