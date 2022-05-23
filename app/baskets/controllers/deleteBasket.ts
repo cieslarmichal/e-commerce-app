@@ -1,26 +1,34 @@
-import { DeleteItemCommand } from '@aws-sdk/client-dynamodb';
-import { marshall } from '@aws-sdk/util-dynamodb';
 import { APIGatewayEvent, ProxyResult } from 'aws-lambda';
 import { commonMiddleware, dynamoDbClient } from '../shared';
 import { StatusCodes } from 'http-status-codes';
+import createError from 'http-errors';
+import { BasketRepository } from '../domain/repositories/basketRepository';
+import { BasketMapper } from '../domain/mappers';
+import { BasketService } from '../domain/services/basketService';
+import { DeleteBasketParamDto } from './dtos';
+import { LoggerService, RecordToInstanceTransformer, ValidationError } from '../../common';
 
-export async function deleteBasketByEmail(email: string) {
-  await dynamoDbClient.send(
-    new DeleteItemCommand({
-      TableName: process.env.DB_TABLE_NAME,
-      Key: marshall({ email }),
-    }),
-  );
-}
+const basketRepository = new BasketRepository(dynamoDbClient, new BasketMapper());
+const basketService = new BasketService(basketRepository, new LoggerService());
 
 async function deleteBasket(event: APIGatewayEvent): Promise<ProxyResult> {
-  const email = event.pathParameters!.email as string;
+  let deleteBasketParamDto: DeleteBasketParamDto;
 
-  await deleteBasketByEmail(email);
-  console.log('Success, item deleted');
+  try {
+    deleteBasketParamDto = RecordToInstanceTransformer.strictTransform(
+      event.pathParameters || {},
+      DeleteBasketParamDto,
+    );
+  } catch (error) {
+    if (error instanceof ValidationError) {
+      throw new createError.BadRequest(error.message);
+    }
+  }
+
+  await basketService.removeBasket(deleteBasketParamDto!.id);
 
   return {
-    statusCode: StatusCodes.OK,
+    statusCode: StatusCodes.NO_CONTENT,
     body: JSON.stringify({
       data: '',
     }),

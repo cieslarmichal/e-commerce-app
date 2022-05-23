@@ -1,33 +1,35 @@
-import { GetItemCommand } from '@aws-sdk/client-dynamodb';
-import { marshall, unmarshall } from '@aws-sdk/util-dynamodb';
 import { APIGatewayEvent, ProxyResult } from 'aws-lambda';
 import { commonMiddleware, dynamoDbClient } from '../shared';
 import { StatusCodes } from 'http-status-codes';
+import { GetBasketParamDto, GetBasketResponseData } from './dtos';
+import createError from 'http-errors';
+import { BasketRepository } from '../domain/repositories/basketRepository';
+import { BasketMapper } from '../domain/mappers';
+import { BasketService } from '../domain/services/basketService';
+import { LoggerService, RecordToInstanceTransformer, ValidationError } from '../../common';
 
-export async function getBasketByEmail(email: string) {
-  const { Item } = await dynamoDbClient.send(
-    new GetItemCommand({
-      TableName: process.env.DB_TABLE_NAME,
-      Key: marshall({ email }),
-    }),
-  );
-
-  return Item;
-}
+const basketRepository = new BasketRepository(dynamoDbClient, new BasketMapper());
+const basketService = new BasketService(basketRepository, new LoggerService());
 
 async function getBasket(event: APIGatewayEvent): Promise<ProxyResult> {
-  const email = event.pathParameters!.email as string;
+  let getBasketParamDto: GetBasketParamDto;
 
-  const basket = await getBasketByEmail(email);
+  try {
+    getBasketParamDto = RecordToInstanceTransformer.strictTransform(event.pathParameters || {}, GetBasketParamDto);
+  } catch (error) {
+    if (error instanceof ValidationError) {
+      throw new createError.BadRequest(error.message);
+    }
+  }
 
-  console.log(basket);
+  const basket = await basketService.findBasket(getBasketParamDto!.id);
 
-  const body = basket ? unmarshall(basket) : {};
+  const responseData = new GetBasketResponseData(basket);
 
   return {
     statusCode: StatusCodes.OK,
     body: JSON.stringify({
-      data: body,
+      data: responseData,
     }),
   };
 }

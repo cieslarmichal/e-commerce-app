@@ -30,7 +30,7 @@ async function createProduct(event: APIGatewayEvent): Promise<ProxyResult> {
   const responseData = new CreateProductResponseData(product);
 
   return {
-    statusCode: StatusCodes.OK,
+    statusCode: StatusCodes.CREATED,
     body: JSON.stringify({
       data: responseData,
     }),
