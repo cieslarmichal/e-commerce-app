@@ -11,6 +11,7 @@
     "build": "npm run clean && tsc"
   },
   "dependencies": {
+    "@aws-sdk/client-eventbridge": "^3.95.0",
     "bunyan": "^1.8.15",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.13.2"
