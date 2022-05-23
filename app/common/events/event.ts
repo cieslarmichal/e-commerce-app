@@ -1,6 +1,6 @@
 export interface Event {
   source: string;
-  detail: string;
+  detail: any;
   detailType: string;
   eventBusName: string;
 }
