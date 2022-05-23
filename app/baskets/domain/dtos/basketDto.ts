@@ -1,4 +1,4 @@
-import { IsArray, IsString, IsUUID } from 'class-validator';
+import { IsUUID, IsArray, IsString } from 'class-validator';
 import { RecordToInstanceTransformer } from '../../../common';
 
 export class BasketDto {
