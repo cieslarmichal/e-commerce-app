@@ -5,3 +5,4 @@ export * from './checkoutBasketLambda';
 export * from './deleteBasketLambda';
 export * from './addProductToBasketLambda';
 export * from './deleteProductFromBasketLambda';
+export * from './getBasketProductsLambda';
