@@ -9,6 +9,7 @@ export interface BasketsApiGatewayProperties {
   readonly deleteBasketLambda: IFunction;
   readonly checkoutBasketLambda: IFunction;
   readonly addProductToBasketLambda: IFunction;
+  readonly deleteProductFromBasketLambda: IFunction;
 }
 
 export class BasketsApiGateway extends Construct {
@@ -35,6 +36,10 @@ export class BasketsApiGateway extends Construct {
     const basketProducts = basket.addResource('products');
 
     basketProducts.addMethod('POST', new LambdaIntegration(properties.addProductToBasketLambda));
+
+    const basketProduct = basketProducts.addResource('{id}');
+
+    basketProduct.addMethod('DELETE', new LambdaIntegration(properties.deleteProductFromBasketLambda));
 
     const basketCheckout = baskets.addResource('checkout');
 

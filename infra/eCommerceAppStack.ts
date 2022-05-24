@@ -9,6 +9,7 @@ import {
   CreateOrderLambda,
   CreateProductLambda,
   DeleteBasketLambda,
+  DeleteProductFromBasketLambda,
   DeleteProductLambda,
   GetBasketLambda,
   GetBasketsLambda,
@@ -40,6 +41,9 @@ export class ECommerceAppStack extends Stack {
     const deleteBasketLambda = new DeleteBasketLambda(this, { basketsTable: basketsTable.instance });
     const checkoutBasketLambda = new CheckoutBasketLambda(this, { basketsTable: basketsTable.instance });
     const addProductToBasketLambda = new AddProductToBasketLambda(this, { basketsTable: basketsTable.instance });
+    const deleteProductFromBasketLambda = new DeleteProductFromBasketLambda(this, {
+      basketsTable: basketsTable.instance,
+    });
 
     const createOrderLambda = new CreateOrderLambda(this, { ordersTable: ordersTable.instance });
     const getOrdersLambda = new GetOrdersLambda(this, { ordersTable: ordersTable.instance });
@@ -59,6 +63,7 @@ export class ECommerceAppStack extends Stack {
       deleteBasketLambda: deleteBasketLambda.instance,
       checkoutBasketLambda: checkoutBasketLambda.instance,
       addProductToBasketLambda: addProductToBasketLambda.instance,
+      deleteProductFromBasketLambda: deleteProductFromBasketLambda.instance,
     });
 
     new OrdersApiGateway(this, {
