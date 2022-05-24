@@ -9,7 +9,7 @@ export class BasketDto {
   public readonly email: string;
 
   @IsArray()
-  public readonly products: string[];
+  public readonly products: { name: string; price: number }[];
 
   public static readonly create = RecordToInstanceTransformer.transformFactory(BasketDto);
 }

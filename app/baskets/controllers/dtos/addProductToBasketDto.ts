@@ -1,4 +1,4 @@
-import { IsUUID } from 'class-validator';
+import { IsNumber, IsString, IsUUID } from 'class-validator';
 import { BasketDto } from './basketDto';
 
 export class AddProductToBasketParamDto {
@@ -7,8 +7,11 @@ export class AddProductToBasketParamDto {
 }
 
 export class AddProductToBasketBodyDto {
-  @IsUUID('4')
-  public readonly productId: string;
+  @IsString()
+  public readonly name: string;
+
+  @IsNumber()
+  public readonly price: number;
 }
 
 export class AddProductToBasketResponseData {

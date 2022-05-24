@@ -1,5 +1,5 @@
 import { BasketDto } from '../dtos';
-import { CreateBasketData } from './types';
+import { AddProductToBasketData, CreateBasketData } from './types';
 import { LoggerService } from '../../../common';
 import { BasketRepository } from '../repositories/basketRepository';
 import { BasketNotFoundError } from '../errors';
@@ -64,8 +64,8 @@ export class BasketService {
     this.loggerService.info('Basket checked out.', { basketId });
   }
 
-  public async addProductToBasket(basketId: string, productId: string): Promise<BasketDto> {
-    this.loggerService.debug('Adding product to basket...', { basketId, productId });
+  public async addProductToBasket(basketId: string, product: AddProductToBasketData): Promise<BasketDto> {
+    this.loggerService.debug('Adding product to basket...', { basketId, product });
 
     const basket = await this.basketRepository.findOne(basketId);
 
@@ -73,11 +73,11 @@ export class BasketService {
       throw new BasketNotFoundError(basketId);
     }
 
-    const updatedProducts = [...basket.products, productId];
+    const updatedProducts = [...basket.products, product];
 
     const updatedBasket = await this.basketRepository.updateOne(basketId, { products: updatedProducts });
 
-    this.loggerService.info('Product added to basket.', { basketId, productId });
+    this.loggerService.info('Product added to basket.', { basketId, product });
 
     return updatedBasket;
   }

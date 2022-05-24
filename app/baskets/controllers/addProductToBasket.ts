@@ -30,10 +30,7 @@ async function addProductToBasket(event: APIGatewayEvent): Promise<ProxyResult> 
     }
   }
 
-  const basket = await basketService.addProductToBasket(
-    addProductToBasketParamDto!.id,
-    addProductToBasketBodyDto!.productId,
-  );
+  const basket = await basketService.addProductToBasket(addProductToBasketParamDto!.id, addProductToBasketBodyDto!);
 
   const responseData = new AddProductToBasketResponseData(basket);
 

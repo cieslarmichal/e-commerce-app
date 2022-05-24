@@ -9,5 +9,5 @@ export class Basket {
   public email: string;
 
   @IsArray()
-  public products: string[];
+  public products: { name: string; price: number }[];
 }
