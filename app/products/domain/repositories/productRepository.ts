@@ -2,27 +2,30 @@ import { ProductNotFoundError } from '../errors';
 import { ProductDto } from '../dtos';
 import { Product } from '../entities';
 import {
-  DeleteItemCommand,
-  DynamoDBClient,
-  GetItemCommand,
-  PutItemCommand,
+  DeleteCommand,
+  DynamoDBDocumentClient,
+  GetCommand,
+  PutCommand,
   ScanCommand,
-  UpdateItemCommand,
-} from '@aws-sdk/client-dynamodb';
-import { marshall, unmarshall } from '@aws-sdk/util-dynamodb';
+  UpdateCommand,
+} from '@aws-sdk/lib-dynamodb';
+
 import { ProductMapper } from '../mappers';
 import { v4 as uuid4 } from 'uuid';
 
 export class ProductRepository {
-  public constructor(private readonly dynamoDbClient: DynamoDBClient, private readonly productMapper: ProductMapper) {}
+  public constructor(
+    private readonly dynamoDBDocumentClient: DynamoDBDocumentClient,
+    private readonly productMapper: ProductMapper,
+  ) {}
 
   public async createOne(productData: Product): Promise<ProductDto> {
     productData.id = uuid4();
 
-    await this.dynamoDbClient.send(
-      new PutItemCommand({
+    await this.dynamoDBDocumentClient.send(
+      new PutCommand({
         TableName: process.env.DB_TABLE_NAME,
-        Item: marshall(productData || {}),
+        Item: productData,
       }),
     );
 
@@ -36,10 +39,10 @@ export class ProductRepository {
   }
 
   public async findOne(id: string): Promise<ProductDto | null> {
-    const { Item } = await this.dynamoDbClient.send(
-      new GetItemCommand({
+    const { Item } = await this.dynamoDBDocumentClient.send(
+      new GetCommand({
         TableName: process.env.DB_TABLE_NAME,
-        Key: marshall({ id }),
+        Key: { id },
       }),
     );
 
@@ -47,16 +50,14 @@ export class ProductRepository {
       return null;
     }
 
-    const product = unmarshall(Item);
-
-    return this.productMapper.mapEntityToDto(product);
+    return this.productMapper.mapEntityToDto(Item);
   }
 
   public async exists(id: string): Promise<boolean> {
-    const { Item } = await this.dynamoDbClient.send(
-      new GetItemCommand({
+    const { Item } = await this.dynamoDBDocumentClient.send(
+      new GetCommand({
         TableName: process.env.DB_TABLE_NAME,
-        Key: marshall({ id }),
+        Key: { id },
       }),
     );
 
@@ -64,13 +65,13 @@ export class ProductRepository {
   }
 
   public async findMany(): Promise<ProductDto[]> {
-    const { Items } = await this.dynamoDbClient.send(
+    const { Items } = await this.dynamoDBDocumentClient.send(
       new ScanCommand({
         TableName: process.env.DB_TABLE_NAME,
       }),
     );
 
-    const products = Items ? Items.map((item) => unmarshall(item)) : [];
+    const products = Items || [];
 
     return products.map((product) => this.productMapper.mapEntityToDto(product));
   }
@@ -87,10 +88,10 @@ export class ProductRepository {
 
     console.log(productDataKeysWithDefinedValues);
 
-    const response = await this.dynamoDbClient.send(
-      new UpdateItemCommand({
+    const response = await this.dynamoDBDocumentClient.send(
+      new UpdateCommand({
         TableName: process.env.DB_TABLE_NAME,
-        Key: marshall({ id }),
+        Key: { id },
         UpdateExpression: `SET ${productDataKeysWithDefinedValues
           .map((_, index) => `#key${index} = :value${index}`)
           .join(', ')}`,
@@ -101,21 +102,19 @@ export class ProductRepository {
           }),
           {},
         ),
-        ExpressionAttributeValues: marshall(
-          productDataKeysWithDefinedValues.reduce(
-            (previousValue, currentValue, index) => ({
-              ...previousValue,
-              // @ts-ignore
-              [`:value${index}`]: productData[currentValue],
-            }),
-            {},
-          ),
+        ExpressionAttributeValues: productDataKeysWithDefinedValues.reduce(
+          (previousValue, currentValue, index) => ({
+            ...previousValue,
+            // @ts-ignore
+            [`:value${index}`]: productData[currentValue],
+          }),
+          {},
         ),
         ReturnValues: 'ALL_NEW',
       }),
     );
 
-    const updatedProduct = response.Attributes ? unmarshall(response.Attributes) : {};
+    const updatedProduct = response.Attributes || {};
 
     return this.productMapper.mapEntityToDto(updatedProduct);
   }
@@ -127,10 +126,10 @@ export class ProductRepository {
       throw new ProductNotFoundError(id);
     }
 
-    await this.dynamoDbClient.send(
-      new DeleteItemCommand({
+    await this.dynamoDBDocumentClient.send(
+      new DeleteCommand({
         TableName: process.env.DB_TABLE_NAME,
-        Key: marshall({ id }),
+        Key: { id },
       }),
     );
   }

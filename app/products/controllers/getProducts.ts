@@ -1,5 +1,5 @@
 import { APIGatewayEvent, ProxyResult } from 'aws-lambda';
-import { commonMiddleware, dynamoDbClient } from '../shared';
+import { commonMiddleware, dynamoDbDocumentClient } from '../shared';
 import { StatusCodes } from 'http-status-codes';
 import { ProductRepository } from '../domain/repositories/productRepository';
 import { ProductMapper } from '../domain/mappers';
@@ -7,7 +7,7 @@ import { ProductService } from '../domain/services/productService';
 import { LoggerService } from '../../common';
 import { GetProductsResponseData } from './dtos';
 
-const productRepository = new ProductRepository(dynamoDbClient, new ProductMapper());
+const productRepository = new ProductRepository(dynamoDbDocumentClient, new ProductMapper());
 const productService = new ProductService(productRepository, new LoggerService());
 
 async function getProducts(event: APIGatewayEvent): Promise<ProxyResult> {
