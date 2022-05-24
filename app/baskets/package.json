@@ -1,6 +1,12 @@
 {
   "name": "baskets",
   "version": "1.0.0",
+  "scripts": {
+    "build": "tsc",
+    "watch": "tsc -w",
+    "test": "jest",
+    "cdk": "cdk"
+  },
   "dependencies": {
     "@aws-cdk/aws-lambda": "^1.156.1",
     "@aws-sdk/client-dynamodb": "^3.87.0",

@@ -7,6 +7,9 @@ export class AddProductToBasketParamDto {
 }
 
 export class AddProductToBasketBodyDto {
+  @IsUUID('4')
+  public readonly id: string;
+
   @IsString()
   public readonly name: string;
 
