@@ -1,5 +1,7 @@
-import { IsArray, IsString, IsUUID } from 'class-validator';
+import { Type } from 'class-transformer';
+import { IsArray, IsString, IsUUID, ValidateNested } from 'class-validator';
 import { RecordToInstanceTransformer } from '../../../common';
+import { ProductDto } from './productDto';
 
 export class BasketDto {
   @IsUUID('4')
@@ -8,8 +10,10 @@ export class BasketDto {
   @IsString()
   public readonly email: string;
 
+  @Type(() => ProductDto)
+  @ValidateNested({ each: true })
   @IsArray()
-  public readonly products: { name: string; price: number }[];
+  public readonly products: ProductDto[];
 
   public static readonly create = RecordToInstanceTransformer.transformFactory(BasketDto);
 }

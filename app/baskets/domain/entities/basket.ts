@@ -1,4 +1,6 @@
-import { IsOptional, IsString, IsUUID, IsArray } from 'class-validator';
+import { Type } from 'class-transformer';
+import { IsOptional, IsString, IsUUID, IsArray, ValidateNested } from 'class-validator';
+import { Product } from './product';
 
 export class Basket {
   @IsUUID('4')
@@ -8,6 +10,8 @@ export class Basket {
   @IsString()
   public email: string;
 
+  @Type(() => Product)
+  @ValidateNested({ each: true })
   @IsArray()
-  public products: { name: string; price: number }[];
+  public products: Product[];
 }
