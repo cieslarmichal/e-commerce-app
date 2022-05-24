@@ -1,7 +1,6 @@
 import { BasketNotFoundError } from '../errors';
 import { BasketDto } from '../dtos';
 import { Basket } from '../entities';
-import { marshall, unmarshall } from '@aws-sdk/util-dynamodb';
 import { BasketMapper } from '../mappers';
 import { v4 as uuid4 } from 'uuid';
 import {
@@ -22,14 +21,12 @@ export class BasketRepository {
   public async createOne(basketData: Basket): Promise<BasketDto> {
     basketData.id = uuid4();
 
-    const { Attributes } = await this.dynamoDbDocumentClient.send(
+    await this.dynamoDbDocumentClient.send(
       new PutCommand({
         TableName: process.env.DB_TABLE_NAME,
         Item: basketData,
       }),
     );
-
-    console.log('Attributes', Attributes);
 
     const createdBasket = await this.findOne(basketData.id);
 
@@ -52,9 +49,7 @@ export class BasketRepository {
       return null;
     }
 
-    const basket = unmarshall(Item);
-
-    return this.basketMapper.mapEntityToDto(basket);
+    return this.basketMapper.mapEntityToDto(Item);
   }
 
   public async exists(id: string): Promise<boolean> {
@@ -75,7 +70,7 @@ export class BasketRepository {
       }),
     );
 
-    const baskets = Items ? Items.map((item) => unmarshall(item)) : [];
+    const baskets = Items || [];
 
     return baskets.map((basket) => this.basketMapper.mapEntityToDto(basket));
   }
@@ -106,21 +101,19 @@ export class BasketRepository {
           }),
           {},
         ),
-        ExpressionAttributeValues: marshall(
-          basketDataKeysWithDefinedValues.reduce(
-            (previousValue, currentValue, index) => ({
-              ...previousValue,
-              // @ts-ignore
-              [`:value${index}`]: basketData[currentValue],
-            }),
-            {},
-          ),
+        ExpressionAttributeValues: basketDataKeysWithDefinedValues.reduce(
+          (previousValue, currentValue, index) => ({
+            ...previousValue,
+            // @ts-ignore
+            [`:value${index}`]: basketData[currentValue],
+          }),
+          {},
         ),
         ReturnValues: 'ALL_NEW',
       }),
     );
 
-    const updatedBasket = response.Attributes ? unmarshall(response.Attributes) : {};
+    const updatedBasket = response.Attributes || {};
 
     return this.basketMapper.mapEntityToDto(updatedBasket);
   }
