@@ -1,14 +1,14 @@
 import { APIGatewayEvent, ProxyResult } from 'aws-lambda';
-import { commonMiddleware, dynamoDbClient } from '../shared';
+import { commonMiddleware, dynamoDbDocumentClient } from '../shared';
 import { StatusCodes } from 'http-status-codes';
-import addProductToError from 'http-errors';
+import createError from 'http-errors';
 import { BasketRepository } from '../domain/repositories/basketRepository';
 import { BasketMapper } from '../domain/mappers';
 import { BasketService } from '../domain/services/basketService';
 import { AddProductToBasketBodyDto, AddProductToBasketParamDto, AddProductToBasketResponseData } from './dtos';
 import { LoggerService, RecordToInstanceTransformer, ValidationError } from '../../common';
 
-const basketRepository = new BasketRepository(dynamoDbClient, new BasketMapper());
+const basketRepository = new BasketRepository(dynamoDbDocumentClient, new BasketMapper());
 const basketService = new BasketService(basketRepository, new LoggerService());
 
 async function addProductToBasket(event: APIGatewayEvent): Promise<ProxyResult> {
@@ -26,7 +26,7 @@ async function addProductToBasket(event: APIGatewayEvent): Promise<ProxyResult> 
     );
   } catch (error) {
     if (error instanceof ValidationError) {
-      throw new addProductToError.BadRequest(error.message);
+      throw new createError.BadRequest(error.message);
     }
   }
 

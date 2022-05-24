@@ -5,6 +5,7 @@
     "@aws-cdk/aws-lambda": "^1.156.1",
     "@aws-sdk/client-dynamodb": "^3.87.0",
     "@aws-sdk/client-eventbridge": "^3.92.0",
+    "@aws-sdk/lib-dynamodb": "^3.95.0",
     "@aws-sdk/util-dynamodb": "^3.87.0",
     "@middy/core": "^3.0.3",
     "@middy/http-error-handler": "^3.0.3",
