@@ -1,2 +1,2 @@
 export * from './orderDto';
-export * from './orderItemDto';
+export * from './productDto';

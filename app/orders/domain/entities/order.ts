@@ -1,6 +1,6 @@
 import { Type } from 'class-transformer';
 import { IsUUID, IsString, IsArray, ValidateNested, IsDate, IsNumber } from 'class-validator';
-import { OrderItem } from './orderItem';
+import { Product } from './product';
 
 export class Order {
   @IsUUID('4')
@@ -15,8 +15,8 @@ export class Order {
   @IsNumber()
   public totalPrice?: number;
 
-  @Type(() => OrderItem)
+  @Type(() => Product)
   @ValidateNested({ each: true })
   @IsArray()
-  public items: OrderItem[];
+  public products: Product[];
 }

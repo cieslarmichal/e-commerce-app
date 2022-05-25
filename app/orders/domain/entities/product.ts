@@ -1,6 +1,6 @@
 import { IsNumber, IsString } from 'class-validator';
 
-export class OrderItemData {
+export class Product {
   @IsString()
   public readonly name: string;
 

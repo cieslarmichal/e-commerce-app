@@ -1,13 +1,13 @@
 import { Type } from 'class-transformer';
 import { IsString, IsArray, ValidateNested } from 'class-validator';
-import { OrderItemData } from './orderItemData';
+import { ProductData } from './productData';
 
 export class CreateOrderData {
   @IsString()
   public readonly email: string;
 
-  @Type(() => OrderItemData)
+  @Type(() => ProductData)
   @ValidateNested({ each: true })
   @IsArray()
-  public readonly items: OrderItemData[];
+  public readonly products: ProductData[];
 }

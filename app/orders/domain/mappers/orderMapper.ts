@@ -1,14 +1,14 @@
 import { RecordToInstanceTransformer } from '../../../common';
 import { OrderDto } from '../dtos';
-import { OrderItemMapper } from './orderItemMapper';
+import { ProductMapper } from './productMapper';
 
 export class OrderMapper {
-  public constructor(private readonly orderItemMapper: OrderItemMapper) {}
+  public constructor(private readonly productMapper: ProductMapper) {}
 
   public mapEntityToDto(entityRecord: Record<any, any>): OrderDto {
-    const itemsDto = entityRecord['items'].map((orderItem: any) => this.orderItemMapper.mapEntityToDto(orderItem));
+    const productsDto = entityRecord['products'].map((product: any) => this.productMapper.mapEntityToDto(product));
 
-    entityRecord['items'] = itemsDto;
+    entityRecord['products'] = productsDto;
 
     return RecordToInstanceTransformer.transform(entityRecord, OrderDto);
   }

@@ -1,2 +1,2 @@
 export * from './orderMapper';
-export * from './orderItemMapper';
+export * from './productMapper';

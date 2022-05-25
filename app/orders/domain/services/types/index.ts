@@ -1,2 +1,2 @@
 export * from './createOrderData';
-export * from './orderItemData';
+export * from './productData';

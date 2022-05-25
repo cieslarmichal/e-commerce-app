@@ -1,7 +1,7 @@
 import { IsNumber, IsString } from 'class-validator';
 import { RecordToInstanceTransformer } from '../../../common';
 
-export class OrderItemDto {
+export class ProductDto {
   @IsString()
   public readonly name: string;
 
@@ -11,5 +11,5 @@ export class OrderItemDto {
   @IsNumber()
   public readonly amount: number;
 
-  public static readonly create = RecordToInstanceTransformer.transformFactory(OrderItemDto);
+  public static readonly create = RecordToInstanceTransformer.transformFactory(ProductDto);
 }
