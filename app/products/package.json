@@ -15,6 +15,7 @@
     "@middy/core": "^3.0.3",
     "@middy/http-error-handler": "^3.0.3",
     "@middy/http-event-normalizer": "^3.0.3",
+    "@middy/http-header-normalizer": "^3.0.3",
     "@middy/http-json-body-parser": "^3.0.3",
     "@middy/http-security-headers": "^3.0.3",
     "class-validator": "^0.13.2",

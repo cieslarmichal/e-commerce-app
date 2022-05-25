@@ -4,10 +4,11 @@ import { ValidationError } from '../../common';
 import createError from 'http-errors';
 import { BasketNotFoundError, ProductNotFoundError } from '../domain/errors';
 import middy from '@middy/core';
+import httpHeaderNormalizer from '@middy/http-header-normalizer';
 
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
 
-const errorMiddleware = (): middy.MiddlewareObj<APIGatewayProxyEvent, APIGatewayProxyResult> => {
+const httpErrorMiddleware = (): middy.MiddlewareObj<APIGatewayProxyEvent, APIGatewayProxyResult> => {
   const onError: middy.MiddlewareFn<APIGatewayProxyEvent, APIGatewayProxyResult> = async (request): Promise<void> => {
     let httpError;
 
@@ -30,4 +31,4 @@ const errorMiddleware = (): middy.MiddlewareObj<APIGatewayProxyEvent, APIGateway
 };
 
 export const commonMiddleware = (handler: any) =>
-  middy(handler).use([httpSecurityHeaders(), httpEventNormalizer(), errorMiddleware()]);
+  middy(handler).use([httpHeaderNormalizer(), httpSecurityHeaders(), httpEventNormalizer(), httpErrorMiddleware()]);
