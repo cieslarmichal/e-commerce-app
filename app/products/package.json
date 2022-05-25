@@ -18,6 +18,7 @@
     "@middy/http-json-body-parser": "^3.0.3",
     "@middy/http-security-headers": "^3.0.3",
     "class-validator": "^0.13.2",
+    "http-errors": "^2.0.0",
     "http-status-codes": "^2.2.0",
     "uuid": "^8.3.2"
   },
