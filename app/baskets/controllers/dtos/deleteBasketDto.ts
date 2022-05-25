@@ -1,6 +1,6 @@
-import { IsString } from 'class-validator';
+import { IsUUID } from 'class-validator';
 
 export class DeleteBasketParamDto {
-  @IsString()
+  @IsUUID('4')
   public readonly id: string;
 }

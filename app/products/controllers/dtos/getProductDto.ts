@@ -1,8 +1,8 @@
-import { IsString } from 'class-validator';
+import { IsUUID } from 'class-validator';
 import { ProductDto } from './productDto';
 
 export class GetProductParamDto {
-  @IsString()
+  @IsUUID('4')
   public readonly id: string;
 }
 

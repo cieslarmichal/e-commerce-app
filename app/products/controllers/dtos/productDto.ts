@@ -1,8 +1,8 @@
-import { IsOptional, IsString, IsNumber } from 'class-validator';
+import { IsOptional, IsString, IsNumber, IsUUID } from 'class-validator';
 import { RecordToInstanceTransformer } from '../../../common';
 
 export class ProductDto {
-  @IsString()
+  @IsUUID('4')
   public readonly id: string;
 
   @IsString()

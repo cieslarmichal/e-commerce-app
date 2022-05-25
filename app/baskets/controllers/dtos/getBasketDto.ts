@@ -1,8 +1,8 @@
-import { IsString } from 'class-validator';
+import { IsUUID } from 'class-validator';
 import { BasketDto } from './basketDto';
 
 export class GetBasketParamDto {
-  @IsString()
+  @IsUUID('4')
   public readonly id: string;
 }
 

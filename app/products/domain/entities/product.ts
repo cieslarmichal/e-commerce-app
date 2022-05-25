@@ -1,7 +1,7 @@
-import { IsOptional, IsString, IsNumber } from 'class-validator';
+import { IsOptional, IsString, IsNumber, IsUUID } from 'class-validator';
 
 export class Product {
-  @IsString()
+  @IsUUID('4')
   public id?: string;
 
   @IsString()
