@@ -1,53 +1,26 @@
 import { APIGatewayEvent, ProxyResult } from 'aws-lambda';
-import { commonMiddleware, dynamoDbClient } from '../shared';
-import { ScanCommand } from '@aws-sdk/client-dynamodb';
-import { unmarshall } from '@aws-sdk/util-dynamodb';
+import { ProductMapper, OrderMapper } from '../domain/mappers';
+import { LoggerService } from '../../common';
+import { commonMiddleware, dynamoDbDocumentClient } from '../shared';
+import { OrderRepository } from '../domain/repositories/orderRepository';
+import { OrderService } from '../domain/services/basketService';
 import { StatusCodes } from 'http-status-codes';
+import { GetOrdersResponseData } from './dtos';
+
+const orderRepository = new OrderRepository(dynamoDbDocumentClient, new OrderMapper(new ProductMapper()));
+const orderService = new OrderService(orderRepository, new LoggerService());
 
 async function getOrders(event: APIGatewayEvent): Promise<ProxyResult> {
-  // const { email } = event.queryStringParameters;
+  const orders = await orderService.findOrders();
 
-  // body = await getOrder(email, orderDate);
-  const body = await getAllOrders();
+  const responseData = new GetOrdersResponseData(orders);
 
   return {
     statusCode: StatusCodes.OK,
     body: JSON.stringify({
-      data: body,
+      data: responseData,
     }),
   };
 }
-
-// const getOrder = async (email: string, orderDate: string) => {
-//   console.log('getOrder');
-
-//   const { Items } = await dynamoDbClient.send(
-//     new QueryCommand({
-//       TableName: process.env.DB_TABLE_NAME,
-//       KeyConditionExpression: 'email = :email and orderDate = :orderDate',
-//       ExpressionAttributeValues: {
-//         ':email': { S: email },
-//         ':orderDate': { S: orderDate },
-//       },
-//     }),
-//   );
-//   console.log(Items);
-
-//   return Items ? Items.map((item) => unmarshall(item)) : {};
-// };
-
-const getAllOrders = async () => {
-  console.log('getOrders');
-
-  const { Items } = await dynamoDbClient.send(
-    new ScanCommand({
-      TableName: process.env.DB_TABLE_NAME,
-    }),
-  );
-
-  console.log(Items);
-
-  return Items ? Items.map((item) => unmarshall(item)) : {};
-};
 
 export const handler = commonMiddleware(getOrders);

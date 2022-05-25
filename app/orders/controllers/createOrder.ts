@@ -4,7 +4,7 @@ import { LoggerService, RecordToInstanceTransformer } from '../../common';
 import { commonMiddleware, dynamoDbDocumentClient } from '../shared';
 import { OrderRepository } from '../domain/repositories/orderRepository';
 import { OrderService } from '../domain/services/basketService';
-import { CreateOrderDto } from './dtos/createOrderDto';
+import { CreateOrderDto } from './dtos';
 
 const orderRepository = new OrderRepository(dynamoDbDocumentClient, new OrderMapper(new ProductMapper()));
 const orderService = new OrderService(orderRepository, new LoggerService());

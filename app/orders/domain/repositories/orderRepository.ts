@@ -23,7 +23,7 @@ export class OrderRepository {
 
     orderData.orderDate = new Date().toISOString();
 
-    const totalPrice = orderData.items.reduce((accumulator, item) => {
+    const totalPrice = orderData.products.reduce((accumulator, item) => {
       return accumulator + item.amount * item.price;
     }, 0);
 

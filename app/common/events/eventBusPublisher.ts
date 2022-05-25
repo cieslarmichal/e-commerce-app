@@ -9,7 +9,7 @@ export abstract class EventBusPublisher<T extends Event> {
   constructor(private readonly eventBridgeClient: EventBridgeClient) {}
 
   public async publish(data: T['detail']): Promise<void> {
-    await this.eventBridgeClient.send(
+    const result = await this.eventBridgeClient.send(
       new PutEventsCommand({
         Entries: [
           {
@@ -22,5 +22,7 @@ export abstract class EventBusPublisher<T extends Event> {
         ],
       }),
     );
+
+    console.log('publish event result', result);
   }
 }
