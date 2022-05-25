@@ -6,6 +6,7 @@ export interface CheckoutBasketEventDetail {
   email: string;
   products: { name: string; amount: number; price: number }[];
 }
+
 export interface CheckoutBasketEvent {
   source: Source.CheckoutBasket;
   detail: CheckoutBasketEventDetail;

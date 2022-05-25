@@ -10,7 +10,7 @@ export class OrderService {
   ) {}
 
   public async createOrder(orderData: CreateOrderData): Promise<OrderDto> {
-    this.loggerService.debug('Creating order...');
+    this.loggerService.debug('Creating order...', { ...orderData });
 
     const order = await this.orderRepository.createOne(orderData);
 
