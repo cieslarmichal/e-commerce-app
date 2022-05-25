@@ -7,3 +7,4 @@ export * from './basketDto';
 export * from './addProductToBasketDto';
 export * from './productDto';
 export * from './getBasketProductsDto';
+export * from './deleteProductFromBasketDto';

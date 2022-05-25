@@ -39,7 +39,7 @@ export class BasketsApiGateway extends Construct {
     basketProducts.addMethod('POST', new LambdaIntegration(properties.addProductToBasketLambda));
     basketProducts.addMethod('GET', new LambdaIntegration(properties.getBasketProductsLambda));
 
-    const basketProduct = basketProducts.addResource('{id}');
+    const basketProduct = basketProducts.addResource('{productId}');
 
     basketProduct.addMethod('DELETE', new LambdaIntegration(properties.deleteProductFromBasketLambda));
 
