@@ -21,6 +21,14 @@ export class OrderRepository {
   public async createOne(orderData: Order): Promise<OrderDto> {
     orderData.id = uuid4();
 
+    orderData.orderDate = new Date().toISOString();
+
+    const totalPrice = orderData.items.reduce((accumulator, item) => {
+      return accumulator + item.amount * item.price;
+    }, 0);
+
+    orderData.totalPrice = totalPrice;
+
     await this.dynamoDbDocumentClient.send(
       new PutCommand({
         TableName: process.env.DB_TABLE_NAME,

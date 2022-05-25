@@ -9,7 +9,7 @@ export class OrdersTable extends Construct {
 
     this.instance = new Table(this, 'OrdersTable', {
       partitionKey: {
-        name: 'email',
+        name: 'id',
         type: AttributeType.STRING,
       },
       sortKey: {

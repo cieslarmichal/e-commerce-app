@@ -113,8 +113,6 @@ export class BasketRepository {
 
     const updatedBasket = response.Attributes || {};
 
-    console.log('updatedBasket', updatedBasket);
-
     return this.basketMapper.mapEntityToDto(updatedBasket);
   }
 

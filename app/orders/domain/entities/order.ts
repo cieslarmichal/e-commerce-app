@@ -4,19 +4,19 @@ import { OrderItem } from './orderItem';
 
 export class Order {
   @IsUUID('4')
-  public readonly id: string;
+  public id?: string;
 
   @IsString()
-  public readonly email: string;
+  public email: string;
 
   @IsDate()
-  public readonly orderDate: string;
+  public orderDate?: string;
 
   @IsNumber()
-  public readonly totalPrice: number;
+  public totalPrice?: number;
 
   @Type(() => OrderItem)
   @ValidateNested({ each: true })
   @IsArray()
-  public readonly items: OrderItem[];
+  public items: OrderItem[];
 }
