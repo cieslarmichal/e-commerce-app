@@ -2,8 +2,10 @@ import { BasketDto, ProductDto } from '../dtos';
 import { AddProductToBasketData, CreateBasketData } from './types';
 import { LoggerService } from '../../../common';
 import { BasketRepository } from '../repositories/basketRepository';
-import { BasketNotFoundError } from '../errors';
+import { BasketNotFoundError, ProductNotFoundError } from '../errors';
 // import { CheckoutBasketEventPublisher } from '../events';
+
+const ITEM_NOT_FOUND_INDEX = -1;
 
 export class BasketService {
   public constructor(
@@ -94,6 +96,32 @@ export class BasketService {
     const updatedBasket = await this.basketRepository.updateOne(basketId, { products: updatedProducts });
 
     this.loggerService.info('Product added to basket.', { basketId, product });
+
+    return updatedBasket;
+  }
+
+  public async removeProductFromBasket(basketId: string, productId: string): Promise<BasketDto> {
+    this.loggerService.debug('Removing product from basket...', { basketId, productId });
+
+    const basket = await this.basketRepository.findOne(basketId);
+
+    if (!basket) {
+      throw new BasketNotFoundError(basketId);
+    }
+
+    const updatedProducts = basket.products;
+
+    const indexOfProductToRemove = updatedProducts.findIndex((value: ProductDto) => value.id === productId);
+
+    if (indexOfProductToRemove === ITEM_NOT_FOUND_INDEX) {
+      throw new ProductNotFoundError(productId);
+    }
+
+    updatedProducts.splice(indexOfProductToRemove, 1);
+
+    const updatedBasket = await this.basketRepository.updateOne(basketId, { products: updatedProducts });
+
+    this.loggerService.info('Product removed from basket.', { basketId, productId });
 
     return updatedBasket;
   }

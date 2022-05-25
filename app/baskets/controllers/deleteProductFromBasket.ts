@@ -5,24 +5,19 @@ import createError from 'http-errors';
 import { BasketRepository } from '../domain/repositories/basketRepository';
 import { BasketMapper } from '../domain/mappers';
 import { BasketService } from '../domain/services/basketService';
-import { AddProductToBasketBodyDto, AddProductToBasketParamDto, AddProductToBasketResponseData } from './dtos';
+import { DeleteProductFromBasketParamDto, DeleteProductFromBasketResponseData } from './dtos';
 import { LoggerService, RecordToInstanceTransformer, ValidationError } from '../../common';
 
 const basketRepository = new BasketRepository(dynamoDbDocumentClient, new BasketMapper());
 const basketService = new BasketService(basketRepository, new LoggerService());
 
-async function addProductToBasket(event: APIGatewayEvent): Promise<ProxyResult> {
-  let addProductToBasketParamDto: AddProductToBasketParamDto;
-  let addProductToBasketBodyDto: AddProductToBasketBodyDto;
+async function deleteProductFromBasket(event: APIGatewayEvent): Promise<ProxyResult> {
+  let deleteProductFromBasketParamDto: DeleteProductFromBasketParamDto;
 
   try {
-    addProductToBasketParamDto = RecordToInstanceTransformer.strictTransform(
+    deleteProductFromBasketParamDto = RecordToInstanceTransformer.strictTransform(
       event.pathParameters || {},
-      AddProductToBasketParamDto,
-    );
-    addProductToBasketBodyDto = RecordToInstanceTransformer.strictTransform(
-      event.body ? JSON.parse(event.body) : {},
-      AddProductToBasketBodyDto,
+      DeleteProductFromBasketParamDto,
     );
   } catch (error) {
     if (error instanceof ValidationError) {
@@ -30,9 +25,11 @@ async function addProductToBasket(event: APIGatewayEvent): Promise<ProxyResult> 
     }
   }
 
-  const basket = await basketService.addProductToBasket(addProductToBasketParamDto!.id, addProductToBasketBodyDto!);
+  const { id: basketId, productId } = deleteProductFromBasketParamDto!;
 
-  const responseData = new AddProductToBasketResponseData(basket);
+  const basket = await basketService.removeProductFromBasket(basketId, productId);
+
+  const responseData = new DeleteProductFromBasketResponseData(basket);
 
   return {
     statusCode: StatusCodes.OK,
@@ -42,4 +39,4 @@ async function addProductToBasket(event: APIGatewayEvent): Promise<ProxyResult> 
   };
 }
 
-export const handler = commonMiddleware(addProductToBasket);
+export const handler = commonMiddleware(deleteProductFromBasket);
