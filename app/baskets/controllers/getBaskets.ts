@@ -3,12 +3,12 @@ import { APIGatewayEvent, ProxyResult } from 'aws-lambda';
 import { commonMiddleware, dynamoDbDocumentClient } from '../shared';
 import { StatusCodes } from 'http-status-codes';
 import { BasketRepository } from '../domain/repositories/basketRepository';
-import { BasketMapper } from '../domain/mappers';
+import { BasketMapper, ProductMapper } from '../domain/mappers';
 import { BasketService } from '../domain/services/basketService';
 import { LoggerService } from '../../common';
 import { GetBasketsResponseData } from './dtos';
 
-const basketRepository = new BasketRepository(dynamoDbDocumentClient, new BasketMapper());
+const basketRepository = new BasketRepository(dynamoDbDocumentClient, new BasketMapper(new ProductMapper()));
 const basketService = new BasketService(basketRepository, new LoggerService());
 
 async function getBaskets(event: APIGatewayEvent): Promise<ProxyResult> {

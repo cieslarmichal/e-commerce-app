@@ -1,5 +1,4 @@
 import { IsUUID } from 'class-validator';
-import { ProductDto } from './productDto';
 
 export class GetBasketProductsParamDto {
   @IsUUID('4')
@@ -7,5 +6,11 @@ export class GetBasketProductsParamDto {
 }
 
 export class GetBasketProductsResponseData {
-  public constructor(public readonly products: ProductDto[]) {}
+  public constructor(
+    public readonly products: {
+      readonly id: string;
+      readonly name: string;
+      readonly price: number;
+    }[],
+  ) {}
 }

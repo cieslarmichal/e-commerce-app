@@ -4,12 +4,12 @@ import { commonMiddleware, dynamoDbDocumentClient } from '../shared';
 import { StatusCodes } from 'http-status-codes';
 import createError from 'http-errors';
 import { BasketRepository } from '../domain/repositories/basketRepository';
-import { BasketMapper } from '../domain/mappers';
+import { BasketMapper, ProductMapper } from '../domain/mappers';
 import { BasketService } from '../domain/services/basketService';
 import { GetBasketProductsParamDto, GetBasketProductsResponseData } from './dtos';
 import { LoggerService, RecordToInstanceTransformer, ValidationError } from '../../common';
 
-const basketRepository = new BasketRepository(dynamoDbDocumentClient, new BasketMapper());
+const basketRepository = new BasketRepository(dynamoDbDocumentClient, new BasketMapper(new ProductMapper()));
 const basketService = new BasketService(basketRepository, new LoggerService());
 
 async function getBasketProducts(event: APIGatewayEvent): Promise<ProxyResult> {

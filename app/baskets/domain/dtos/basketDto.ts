@@ -1,5 +1,5 @@
 import { Type } from 'class-transformer';
-import { IsUUID, IsArray, IsString, ValidateNested } from 'class-validator';
+import { IsUUID, IsString, IsArray, ValidateNested } from 'class-validator';
 import { RecordToInstanceTransformer } from '../../../common';
 import { ProductDto } from './productDto';
 

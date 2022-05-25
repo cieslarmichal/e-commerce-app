@@ -85,8 +85,6 @@ export class BasketRepository {
     // @ts-ignore
     const basketDataKeysWithDefinedValues = Object.keys(basketData).filter((key) => basketData[key]);
 
-    console.log(basketDataKeysWithDefinedValues);
-
     const response = await this.dynamoDbDocumentClient.send(
       new UpdateCommand({
         TableName: process.env.DB_TABLE_NAME,
@@ -114,6 +112,8 @@ export class BasketRepository {
     );
 
     const updatedBasket = response.Attributes || {};
+
+    console.log('updatedBasket', updatedBasket);
 
     return this.basketMapper.mapEntityToDto(updatedBasket);
   }

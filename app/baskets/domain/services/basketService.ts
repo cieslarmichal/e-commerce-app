@@ -91,7 +91,9 @@ export class BasketService {
       throw new BasketNotFoundError(basketId);
     }
 
-    const updatedProducts = [...basket.products, product];
+    const updatedProducts = [...basket.products, { ...product }];
+
+    console.log('updatedProducts', updatedProducts);
 
     const updatedBasket = await this.basketRepository.updateOne(basketId, { products: updatedProducts });
 
@@ -111,7 +113,9 @@ export class BasketService {
 
     const updatedProducts = basket.products;
 
-    const indexOfProductToRemove = updatedProducts.findIndex((value: ProductDto) => value.id === productId);
+    const indexOfProductToRemove = updatedProducts.findIndex(
+      (value: { readonly id: string; readonly name: string; readonly price: number }) => value.id === productId,
+    );
 
     if (indexOfProductToRemove === ITEM_NOT_FOUND_INDEX) {
       throw new ProductNotFoundError(productId);

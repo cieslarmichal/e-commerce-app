@@ -13,5 +13,5 @@ export class Basket {
   @Type(() => Product)
   @ValidateNested({ each: true })
   @IsArray()
-  public products: Product[];
+  public readonly products: Product[];
 }
