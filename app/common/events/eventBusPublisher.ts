@@ -14,7 +14,7 @@ export abstract class EventBusPublisher<T extends Event> {
         Entries: [
           {
             Source: this.source,
-            Detail: data,
+            Detail: JSON.stringify(data),
             DetailType: this.detailType,
             Resources: [],
             EventBusName: this.eventBusName,

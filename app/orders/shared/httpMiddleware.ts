@@ -4,7 +4,7 @@ import { ValidationError } from '../../common';
 import createError from 'http-errors';
 import middy from '@middy/core';
 import httpHeaderNormalizer from '@middy/http-header-normalizer';
-
+import errorLogger from '@middy/error-logger';
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
 
 const httpErrorMiddleware = (): middy.MiddlewareObj<APIGatewayProxyEvent, APIGatewayProxyResult> => {
@@ -27,5 +27,11 @@ const httpErrorMiddleware = (): middy.MiddlewareObj<APIGatewayProxyEvent, APIGat
   };
 };
 
-export const commonMiddleware = (handler: any) =>
-  middy(handler).use([httpHeaderNormalizer(), httpSecurityHeaders(), httpEventNormalizer(), httpErrorMiddleware()]);
+export const httpMiddleware = (handler: any) =>
+  middy(handler).use([
+    httpHeaderNormalizer(),
+    httpSecurityHeaders(),
+    httpEventNormalizer(),
+    errorLogger(),
+    httpErrorMiddleware(),
+  ]);

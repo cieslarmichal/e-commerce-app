@@ -82,7 +82,7 @@ export class BasketService {
 
     console.log('products to send', productsEventDto);
 
-    this.checkoutBasketEventPublisher.publish({
+    await this.checkoutBasketEventPublisher.publish({
       email: basket.email,
       products: productsEventDto,
     });

@@ -3,8 +3,8 @@ import { EventBusName } from './eventBusName';
 import { Source } from './source';
 
 export interface CheckoutBasketEventDetail {
-  email: string;
-  products: { name: string; amount: number; price: number }[];
+  readonly email: string;
+  readonly products: { name: string; amount: number; price: number }[];
 }
 
 export interface CheckoutBasketEvent {

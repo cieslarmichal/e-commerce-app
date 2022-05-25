@@ -1,2 +1,3 @@
-export * from './commonMiddleware';
+export * from './httpMiddleware';
+export * from './eventMiddleware';
 export * from './dynamoDbDocumentClient';

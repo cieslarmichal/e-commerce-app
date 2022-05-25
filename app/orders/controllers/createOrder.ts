@@ -1,7 +1,8 @@
+import 'reflect-metadata';
 import { SQSEvent } from 'aws-lambda';
 import { ProductMapper, OrderMapper } from '../domain/mappers';
 import { LoggerService, RecordToInstanceTransformer } from '../../common';
-import { commonMiddleware, dynamoDbDocumentClient } from '../shared';
+import { dynamoDbDocumentClient, eventMiddleware } from '../shared';
 import { OrderRepository } from '../domain/repositories/orderRepository';
 import { OrderService } from '../domain/services/basketService';
 import { CreateOrderDto } from './dtos';
@@ -15,10 +16,12 @@ async function createOrder(event: SQSEvent): Promise<void> {
 
     const recordDetail = JSON.parse(record.body).detail;
 
+    console.log('recordDetail', recordDetail);
+
     const createOrderDto = RecordToInstanceTransformer.strictTransform(recordDetail, CreateOrderDto);
 
     await orderService.createOrder(createOrderDto);
   });
 }
 
-export const handler = commonMiddleware(createOrder);
+export const handler = eventMiddleware(createOrder);

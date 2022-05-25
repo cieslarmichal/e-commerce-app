@@ -1,7 +1,8 @@
+import 'reflect-metadata';
 import { APIGatewayEvent, ProxyResult } from 'aws-lambda';
 import { ProductMapper, OrderMapper } from '../domain/mappers';
 import { LoggerService } from '../../common';
-import { commonMiddleware, dynamoDbDocumentClient } from '../shared';
+import { httpMiddleware, dynamoDbDocumentClient } from '../shared';
 import { OrderRepository } from '../domain/repositories/orderRepository';
 import { OrderService } from '../domain/services/basketService';
 import { StatusCodes } from 'http-status-codes';
@@ -23,4 +24,4 @@ async function getOrders(event: APIGatewayEvent): Promise<ProxyResult> {
   };
 }
 
-export const handler = commonMiddleware(getOrders);
+export const handler = httpMiddleware(getOrders);

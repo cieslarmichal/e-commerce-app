@@ -29,12 +29,14 @@ export class OrderRepository {
 
     orderData.totalPrice = totalPrice;
 
-    await this.dynamoDbDocumentClient.send(
+    const response = await this.dynamoDbDocumentClient.send(
       new PutCommand({
         TableName: process.env.DB_TABLE_NAME,
         Item: orderData,
       }),
     );
+
+    console.log(response);
 
     const createdOrder = await this.findOne(orderData.id);
 
