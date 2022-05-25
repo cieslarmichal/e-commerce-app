@@ -4,28 +4,16 @@ import { StatusCodes } from 'http-status-codes';
 import { ProductRepository } from '../domain/repositories/productRepository';
 import { ProductMapper } from '../domain/mappers';
 import { ProductService } from '../domain/services/productService';
-import { LoggerService, RecordToInstanceTransformer, ValidationError } from '../../common';
+import { LoggerService, RecordToInstanceTransformer } from '../../common';
 import { DeleteProductParamDto } from './dtos';
-import createError from 'http-errors';
 
 const productRepository = new ProductRepository(dynamoDbDocumentClient, new ProductMapper());
 const productService = new ProductService(productRepository, new LoggerService());
 
 async function deleteProduct(event: APIGatewayEvent): Promise<ProxyResult> {
-  let deleteProductParamDto: DeleteProductParamDto;
+  const { id } = RecordToInstanceTransformer.strictTransform(event.pathParameters || {}, DeleteProductParamDto);
 
-  try {
-    deleteProductParamDto = RecordToInstanceTransformer.strictTransform(
-      event.pathParameters || {},
-      DeleteProductParamDto,
-    );
-  } catch (error) {
-    if (error instanceof ValidationError) {
-      throw new createError.BadRequest(error.message);
-    }
-  }
-
-  await productService.removeProduct(deleteProductParamDto!.id);
+  await productService.removeProduct(id);
 
   return {
     statusCode: StatusCodes.NO_CONTENT,

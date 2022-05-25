@@ -2,31 +2,19 @@ import 'reflect-metadata';
 import { APIGatewayEvent, ProxyResult } from 'aws-lambda';
 import { commonMiddleware, dynamoDbDocumentClient } from '../shared';
 import { StatusCodes } from 'http-status-codes';
-import createError from 'http-errors';
 import { BasketRepository } from '../domain/repositories/basketRepository';
 import { BasketMapper, ProductMapper } from '../domain/mappers';
 import { BasketService } from '../domain/services/basketService';
 import { GetBasketProductsParamDto, GetBasketProductsResponseData } from './dtos';
-import { LoggerService, RecordToInstanceTransformer, ValidationError } from '../../common';
+import { LoggerService, RecordToInstanceTransformer } from '../../common';
 
 const basketRepository = new BasketRepository(dynamoDbDocumentClient, new BasketMapper(new ProductMapper()));
 const basketService = new BasketService(basketRepository, new LoggerService());
 
 async function getBasketProducts(event: APIGatewayEvent): Promise<ProxyResult> {
-  let getBasketProductsParamDto: GetBasketProductsParamDto;
+  const { id } = RecordToInstanceTransformer.strictTransform(event.pathParameters || {}, GetBasketProductsParamDto);
 
-  try {
-    getBasketProductsParamDto = RecordToInstanceTransformer.strictTransform(
-      event.pathParameters || {},
-      GetBasketProductsParamDto,
-    );
-  } catch (error) {
-    if (error instanceof ValidationError) {
-      throw new createError.BadRequest(error.message);
-    }
-  }
-
-  const products = await basketService.findBasketProducts(getBasketProductsParamDto!.id);
+  const products = await basketService.findBasketProducts(id);
 
   const responseData = new GetBasketProductsResponseData(products);
 

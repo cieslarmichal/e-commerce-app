@@ -4,25 +4,16 @@ import { StatusCodes } from 'http-status-codes';
 import { ProductRepository } from '../domain/repositories/productRepository';
 import { ProductMapper } from '../domain/mappers';
 import { ProductService } from '../domain/services/productService';
-import { LoggerService, RecordToInstanceTransformer, ValidationError } from '../../common';
-import createError from 'http-errors';
+import { LoggerService, RecordToInstanceTransformer } from '../../common';
 import { GetProductParamDto, GetProductResponseData } from './dtos';
 
 const productRepository = new ProductRepository(dynamoDbDocumentClient, new ProductMapper());
 const productService = new ProductService(productRepository, new LoggerService());
 
 async function getProduct(event: APIGatewayEvent): Promise<ProxyResult> {
-  let getProductParamDto: GetProductParamDto;
+  const { id } = RecordToInstanceTransformer.strictTransform(event.pathParameters || {}, GetProductParamDto);
 
-  try {
-    getProductParamDto = RecordToInstanceTransformer.strictTransform(event.pathParameters || {}, GetProductParamDto);
-  } catch (error) {
-    if (error instanceof ValidationError) {
-      throw new createError.BadRequest(error.message);
-    }
-  }
-
-  const product = await productService.findProduct(getProductParamDto!.id);
+  const product = await productService.findProduct(id);
 
   const responseData = new GetProductResponseData(product);
 

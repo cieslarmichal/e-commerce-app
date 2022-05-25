@@ -4,33 +4,21 @@ import { StatusCodes } from 'http-status-codes';
 import { ProductRepository } from '../domain/repositories/productRepository';
 import { ProductMapper } from '../domain/mappers';
 import { ProductService } from '../domain/services/productService';
-import { LoggerService, RecordToInstanceTransformer, ValidationError } from '../../common';
-import createError from 'http-errors';
+import { LoggerService, RecordToInstanceTransformer } from '../../common';
 import { UpdateProductParamDto, UpdateProductBodyDto, UpdateProductResponseData } from './dtos';
 
 const productRepository = new ProductRepository(dynamoDbDocumentClient, new ProductMapper());
 const productService = new ProductService(productRepository, new LoggerService());
 
 async function updateProduct(event: APIGatewayEvent): Promise<ProxyResult> {
-  let updateProductParamDto: UpdateProductParamDto;
-  let updateProductBodyDto: UpdateProductBodyDto;
+  const { id } = RecordToInstanceTransformer.strictTransform(event.pathParameters || {}, UpdateProductParamDto);
 
-  try {
-    updateProductParamDto = RecordToInstanceTransformer.strictTransform(
-      event.pathParameters || {},
-      UpdateProductParamDto,
-    );
-    updateProductBodyDto = RecordToInstanceTransformer.strictTransform(
-      event.body ? JSON.parse(event.body) : {},
-      UpdateProductBodyDto,
-    );
-  } catch (error) {
-    if (error instanceof ValidationError) {
-      throw new createError.BadRequest(error.message);
-    }
-  }
+  const updateProductBodyDto = RecordToInstanceTransformer.strictTransform(
+    event.body ? JSON.parse(event.body) : {},
+    UpdateProductBodyDto,
+  );
 
-  const product = await productService.updateProduct(updateProductParamDto!.id, updateProductBodyDto!);
+  const product = await productService.updateProduct(id, updateProductBodyDto);
 
   const responseData = new UpdateProductResponseData(product);
 
