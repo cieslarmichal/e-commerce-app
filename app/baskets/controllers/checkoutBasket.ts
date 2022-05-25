@@ -1,3 +1,4 @@
+import 'reflect-metadata';
 import { APIGatewayEvent, ProxyResult } from 'aws-lambda';
 import { commonMiddleware, dynamoDbDocumentClient } from '../shared';
 import { StatusCodes } from 'http-status-codes';
