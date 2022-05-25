@@ -3,14 +3,14 @@ import { AddProductToBasketData, CreateBasketData } from './types';
 import { LoggerService } from '../../../common';
 import { BasketRepository } from '../repositories/basketRepository';
 import { BasketNotFoundError, ProductNotFoundError } from '../errors';
-// import { CheckoutBasketEventPublisher } from '../events';
+import { CheckoutBasketEventPublisher } from '../events';
 
 const ITEM_NOT_FOUND_INDEX = -1;
 
 export class BasketService {
   public constructor(
     private readonly basketRepository: BasketRepository,
-    // private readonly checkoutBasketEventPublisher: CheckoutBasketEventPublisher,
+    private readonly checkoutBasketEventPublisher: CheckoutBasketEventPublisher,
     private readonly loggerService: LoggerService,
   ) {}
 
@@ -72,10 +72,20 @@ export class BasketService {
       throw new BasketNotFoundError(basketId);
     }
 
-    // this.checkoutBasketEventPublisher.publish({
-    //   email: basket.email,
-    //   products: [{ name, amount, price }],
-    // });
+    const productsEventDto = basket.products.map((product: ProductDto) => {
+      return {
+        name: product.name,
+        price: product.price,
+        amount: basket.products.filter((otherProduct) => otherProduct.id === product.id).length,
+      };
+    });
+
+    console.log('products to send', productsEventDto);
+
+    this.checkoutBasketEventPublisher.publish({
+      email: basket.email,
+      products: productsEventDto,
+    });
 
     await this.basketRepository.removeOne(basketId);
 

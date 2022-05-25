@@ -1,15 +1,20 @@
 import 'reflect-metadata';
 import { APIGatewayEvent, ProxyResult } from 'aws-lambda';
-import { commonMiddleware, dynamoDbDocumentClient } from '../shared';
+import { commonMiddleware, dynamoDbDocumentClient, eventBridgeClient } from '../shared';
 import { StatusCodes } from 'http-status-codes';
 import { BasketRepository } from '../domain/repositories/basketRepository';
 import { BasketMapper, ProductMapper } from '../domain/mappers';
 import { BasketService } from '../domain/services/basketService';
 import { AddProductToBasketBodyDto, AddProductToBasketParamDto, AddProductToBasketResponseData } from './dtos';
 import { LoggerService, RecordToInstanceTransformer } from '../../common';
+import { CheckoutBasketEventPublisher } from '../domain/events';
 
 const basketRepository = new BasketRepository(dynamoDbDocumentClient, new BasketMapper(new ProductMapper()));
-const basketService = new BasketService(basketRepository, new LoggerService());
+const basketService = new BasketService(
+  basketRepository,
+  new CheckoutBasketEventPublisher(eventBridgeClient),
+  new LoggerService(),
+);
 
 async function addProductToBasket(event: APIGatewayEvent): Promise<ProxyResult> {
   const { id: basketId } = RecordToInstanceTransformer.strictTransform(
