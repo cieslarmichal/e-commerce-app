@@ -11,17 +11,15 @@ const orderRepository = new OrderRepository(dynamoDbDocumentClient, new OrderMap
 const orderService = new OrderService(orderRepository, new LoggerService());
 
 async function createOrder(event: SQSEvent): Promise<void> {
-  event.Records.forEach(async (record) => {
-    console.log('Record: ', record);
-
+  const eventActions = event.Records.map(async (record) => {
     const recordDetail = JSON.parse(record.body).detail;
-
-    console.log('recordDetail', recordDetail);
 
     const createOrderDto = RecordToInstanceTransformer.strictTransform(recordDetail, CreateOrderDto);
 
     await orderService.createOrder(createOrderDto);
   });
+
+  await Promise.all(eventActions);
 }
 
 export const handler = eventMiddleware(createOrder);

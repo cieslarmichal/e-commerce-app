@@ -86,8 +86,6 @@ export class ProductRepository {
     // @ts-ignore
     const productDataKeysWithDefinedValues = Object.keys(productData).filter((key) => productData[key]);
 
-    console.log(productDataKeysWithDefinedValues);
-
     const response = await this.dynamoDBDocumentClient.send(
       new UpdateCommand({
         TableName: process.env.DB_TABLE_NAME,
