@@ -12,10 +12,6 @@ export class OrdersTable extends Construct {
         name: 'id',
         type: AttributeType.STRING,
       },
-      sortKey: {
-        name: 'orderDate',
-        type: AttributeType.STRING,
-      },
       tableName: 'orders',
       removalPolicy: RemovalPolicy.DESTROY,
       billingMode: BillingMode.PAY_PER_REQUEST,

@@ -1,5 +1,5 @@
 import { Type } from 'class-transformer';
-import { IsUUID, IsString, IsArray, ValidateNested, IsDate, IsNumber } from 'class-validator';
+import { IsUUID, IsString, IsArray, ValidateNested, IsNumber } from 'class-validator';
 import { RecordToInstanceTransformer } from '../../../common';
 import { ProductDto } from './productDto';
 
@@ -10,7 +10,7 @@ export class OrderDto {
   @IsString()
   public readonly email: string;
 
-  @IsDate()
+  @IsString()
   public readonly orderDate: string;
 
   @IsNumber()

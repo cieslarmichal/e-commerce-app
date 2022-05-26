@@ -29,14 +29,20 @@ export class OrderRepository {
 
     orderData.totalPrice = totalPrice;
 
-    const response = await this.dynamoDbDocumentClient.send(
-      new PutCommand({
-        TableName: process.env.DB_TABLE_NAME,
-        Item: orderData,
-      }),
-    );
+    console.log('before response', { orderData });
 
-    console.log(response);
+    try {
+      const response = await this.dynamoDbDocumentClient.send(
+        new PutCommand({
+          TableName: process.env.DB_TABLE_NAME,
+          Item: orderData,
+        }),
+      );
+
+      console.log('response', { response });
+    } catch (error) {
+      console.log(error);
+    }
 
     const createdOrder = await this.findOne(orderData.id);
 
@@ -126,7 +132,7 @@ export class OrderRepository {
     return this.orderMapper.mapEntityToDto(updatedOrder);
   }
 
-  public async removeOne(id: string): Promise<void> {
+  public async removeOne(id: string, orderDate: string): Promise<void> {
     const orderExists = await this.exists(id);
 
     if (!orderExists) {

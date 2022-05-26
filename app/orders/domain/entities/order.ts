@@ -1,5 +1,5 @@
 import { Type } from 'class-transformer';
-import { IsUUID, IsString, IsArray, ValidateNested, IsDate, IsNumber } from 'class-validator';
+import { IsUUID, IsString, IsArray, ValidateNested, IsNumber } from 'class-validator';
 import { Product } from './product';
 
 export class Order {
@@ -9,7 +9,7 @@ export class Order {
   @IsString()
   public email: string;
 
-  @IsDate()
+  @IsString()
   public orderDate?: string;
 
   @IsNumber()
