@@ -72,19 +72,26 @@ export class BasketService {
       throw new BasketNotFoundError(basketId);
     }
 
-    const productsEventDto = basket.products.map((product: ProductDto) => {
+    const productsDto = basket.products.map((product: ProductDto) => {
       return {
+        id: product.id,
         name: product.name,
         price: product.price,
         amount: basket.products.filter((otherProduct) => otherProduct.id === product.id).length,
       };
     });
 
-    console.log('products to send', productsEventDto);
+    const uniqueProductsDto = productsDto.reduce(
+      (acc: { id: string; name: string; price: number; amount: number }[], product) =>
+        acc.find((otherProduct) => otherProduct.id === product.id) ? [...acc] : [...acc, product],
+      [],
+    );
+
+    console.log('products to send', uniqueProductsDto);
 
     await this.checkoutBasketEventPublisher.publish({
       email: basket.email,
-      products: productsEventDto,
+      products: uniqueProductsDto,
     });
 
     await this.basketRepository.removeOne(basketId);
