@@ -2,10 +2,12 @@ import { OrderDto } from '../dtos';
 import { CreateOrderData } from './types';
 import { LoggerService } from '../../../common';
 import { OrderRepository } from '../repositories/orderRepository';
+import { CreateOrderEventPublisher } from '../events';
 
 export class OrderService {
   public constructor(
     private readonly orderRepository: OrderRepository,
+    private readonly createOrderEventPublisher: CreateOrderEventPublisher,
     private readonly loggerService: LoggerService,
   ) {}
 
@@ -13,6 +15,14 @@ export class OrderService {
     this.loggerService.debug('Creating order...', { ...orderData });
 
     const order = await this.orderRepository.createOne(orderData);
+
+    console.log('order to send', order);
+
+    await this.createOrderEventPublisher.publish({
+      email: order.email,
+      products: order.products,
+      totalPrice: order.totalPrice,
+    });
 
     this.loggerService.info('Order created.', { orderId: order.id });
 
