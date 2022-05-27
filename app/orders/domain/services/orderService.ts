@@ -16,8 +16,6 @@ export class OrderService {
 
     const order = await this.orderRepository.createOne(orderData);
 
-    console.log('order to send', order);
-
     await this.createOrderEventPublisher.publish({
       orderId: order.id,
       email: order.email,

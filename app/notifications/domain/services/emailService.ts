@@ -21,8 +21,6 @@ export class EmailService {
 
     const emailBody = [...emailBodyOrderEntries, emailBodyTotalPrice].join('\n');
 
-    console.log('email body to send', emailBody);
-
     const params = {
       Source: 'michal.andrzej.cieslar@gmail.com',
       Destination: {

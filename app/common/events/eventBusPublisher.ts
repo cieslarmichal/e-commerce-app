@@ -22,7 +22,5 @@ export abstract class EventBusPublisher<T extends Event> {
         ],
       }),
     );
-
-    console.log('publish event result', result);
   }
 }

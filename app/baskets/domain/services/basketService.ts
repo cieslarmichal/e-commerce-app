@@ -87,8 +87,6 @@ export class BasketService {
       [],
     );
 
-    console.log('products to send', uniqueProductsDto);
-
     await this.checkoutBasketEventPublisher.publish({
       email: basket.email,
       products: uniqueProductsDto,
@@ -109,8 +107,6 @@ export class BasketService {
     }
 
     const updatedProducts = [...basket.products, { ...product }];
-
-    console.log('updatedProducts', updatedProducts);
 
     const updatedBasket = await this.basketRepository.updateOne(basketId, { products: updatedProducts });
 
