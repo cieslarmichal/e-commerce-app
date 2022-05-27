@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "@aws-cdk/aws-lambda": "^1.156.1",
+    "@aws-sdk/client-ses": "^3.100.0",
     "@middy/core": "^3.0.3",
     "@middy/error-logger": "^3.0.3",
     "class-transformer": "^0.5.1",
