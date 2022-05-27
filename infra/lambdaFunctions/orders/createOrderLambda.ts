@@ -20,6 +20,9 @@ export class CreateOrderLambda extends Construct {
       },
       environment: {
         DB_TABLE_NAME: properties.ordersTable.tableName,
+        EVENT_SOURCE: 'com.ecommerce.order.create',
+        EVENT_DETAIL_TYPE: 'CreateOrder',
+        EVENT_BUS_NAME: 'ECommerceEventBus',
       },
       runtime: Runtime.NODEJS_16_X,
       entry: join(__dirname, '/../../../app/orders/controllers/createOrder.ts'),

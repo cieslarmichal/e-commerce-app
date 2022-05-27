@@ -1,2 +1,2 @@
 export * from './ordersQueue';
-export * from './emailQueue';
+export * from './orderCreatedEmailQueue';

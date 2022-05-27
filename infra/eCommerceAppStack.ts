@@ -17,10 +17,10 @@ import {
   GetOrdersLambda,
   GetProductLambda,
   GetProductsLambda,
-  SendEmailLambda,
+  SendOrderCreatedEmailLambda,
   UpdateProductLambda,
 } from './lambdaFunctions';
-import { EmailQueue, OrdersQueue } from './queues';
+import { OrderCreatedEmailQueue, OrdersQueue } from './queues';
 import { BasketsTable, OrdersTable, ProductsTable } from './tables';
 
 export class ECommerceAppStack extends Stack {
@@ -51,7 +51,7 @@ export class ECommerceAppStack extends Stack {
     const createOrderLambda = new CreateOrderLambda(this, { ordersTable: ordersTable.instance });
     const getOrdersLambda = new GetOrdersLambda(this, { ordersTable: ordersTable.instance });
 
-    const sendEmailLambda = new SendEmailLambda(this);
+    const sendOrderCreatedEmail = new SendOrderCreatedEmailLambda(this);
 
     new ProductsApiGateway(this, {
       createProductLambda: createProductLambda.instance,
@@ -80,14 +80,14 @@ export class ECommerceAppStack extends Stack {
       consumer: createOrderLambda.instance,
     });
 
-    const emailQueue = new EmailQueue(this, {
-      consumer: sendEmailLambda.instance,
+    const orderCreatedEmailQueue = new OrderCreatedEmailQueue(this, {
+      consumer: sendOrderCreatedEmail.instance,
     });
 
     new EventBridge(this, {
       publishers: [checkoutBasketLambda.instance, createOrderLambda.instance],
       checkoutBasketRuleTarget: ordersQueue.instance,
-      createOrderRuleTarget: emailQueue.instance,
+      createOrderRuleTarget: orderCreatedEmailQueue.instance,
     });
   }
 }
