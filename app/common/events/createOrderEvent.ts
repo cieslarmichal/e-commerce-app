@@ -2,14 +2,15 @@ import { DetailType } from './detailType';
 import { EventBusName } from './eventBusName';
 import { Source } from './source';
 
-export interface CheckoutBasketEventDetail {
+export interface CreateOrderEventDetail {
   readonly email: string;
   readonly products: { name: string; amount: number; price: number }[];
+  readonly totalPrice: number;
 }
 
-export interface CheckoutBasketEvent {
-  source: Source.CheckoutBasket;
-  detail: CheckoutBasketEventDetail;
-  detailType: DetailType.CheckoutBasket;
+export interface CreateOrderEvent {
+  source: Source.CreateOrder;
+  detail: CreateOrderEventDetail;
+  detailType: DetailType.CreateOrder;
   eventBusName: EventBusName.ECommerceEventBus;
 }

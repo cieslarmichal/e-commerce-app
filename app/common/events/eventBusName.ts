@@ -1,3 +1,3 @@
 export enum EventBusName {
-  CheckoutEventBus = 'CheckoutEventBus',
+  ECommerceEventBus = 'ECommerceEventBus',
 }
