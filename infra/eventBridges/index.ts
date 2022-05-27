@@ -1,1 +1,1 @@
-export * from './checkoutEventBridge';
+export * from './eventBridge';
