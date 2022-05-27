@@ -1,7 +1,7 @@
 import { Stack, StackProps } from 'aws-cdk-lib';
 import { Construct } from 'constructs';
 import { BasketsApiGateway, OrdersApiGateway, ProductsApiGateway } from './apiGateways';
-import { CheckoutEventBridge } from './eventBridges';
+import { EventBridge } from './eventBridges';
 import {
   AddProductToBasketLambda,
   CheckoutBasketLambda,
@@ -77,9 +77,10 @@ export class ECommerceAppStack extends Stack {
       consumer: createOrderLambda.instance,
     });
 
-    new CheckoutEventBridge(this, {
-      publisher: checkoutBasketLambda.instance,
-      target: ordersQueue.instance,
+    new EventBridge(this, {
+      publishers: [checkoutBasketLambda.instance, createOrderLambda.instance],
+      checkoutBasketRuleTarget: ordersQueue.instance,
+      createOrderRuleTarget: emailsQueue.instance,
     });
   }
 }
