@@ -1,6 +1,9 @@
-import { IsString, IsArray, IsNumber } from 'class-validator';
+import { IsString, IsArray, IsNumber, IsUUID } from 'class-validator';
 
 export class OrderCreatedData {
+  @IsUUID('4')
+  public readonly orderId: string;
+
   @IsString()
   public readonly email: string;
 

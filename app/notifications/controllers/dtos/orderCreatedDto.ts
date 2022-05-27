@@ -1,7 +1,10 @@
-import { IsArray, IsString, IsNumber } from 'class-validator';
+import { IsArray, IsString, IsNumber, IsUUID } from 'class-validator';
 import { CreateOrderEventDetail } from '../../../common';
 
 export class OrderCreatedDto implements CreateOrderEventDetail {
+  @IsUUID('4')
+  public readonly orderId: string;
+
   @IsString()
   public readonly email: string;
 

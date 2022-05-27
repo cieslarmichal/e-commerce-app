@@ -19,6 +19,7 @@ export class OrderService {
     console.log('order to send', order);
 
     await this.createOrderEventPublisher.publish({
+      orderId: order.id,
       email: order.email,
       products: order.products,
       totalPrice: order.totalPrice,
